@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom"; // Thêm useLocation
 import { getSuggestionByDepressionLevel } from "../../services/suggestions";
 import { toast } from "react-toastify";
 
@@ -52,19 +53,24 @@ function evaluateAnxiety(depressionLevel: string): string {
 }
 
 const ReseultServey = () => {
+  const location = useLocation(); // Lấy thông tin location từ useLocation
   const [suggestions, setSuggestions] = useState();
-  const [depressionLevel, setDepressionLevel] = useState(
-    DepressionLevel.MildDepression
-  ); // Mock dữ liệu, sau sẽ lấy dựa vào số điểm bài khảo sát
-  const [score, setScore] = useState(8); // Mock dữ liệu, sau sẽ lấy dựa vào số điểm bài khảo sát
-
+  const [depressionLevel, setDepressionLevel] = useState();
+  
+  // Lấy totalScore từ state khi navigate
+  const { totalScore, depressionLevel: levelFromState } = location.state
+  console.log("levelFromState", levelFromState)
   useEffect(() => {
-    fetchSuggestionByDepressionLevel();
-  }, []);
+    if (levelFromState) {
+      setDepressionLevel(levelFromState);
+      fetchSuggestionByDepressionLevel(levelFromState); // Gọi hàm fetchSuggestionByDepressionLevel nếu depressionLevel có
+    }
+  }, [levelFromState]);
 
   const fetchSuggestionByDepressionLevel = async () => {
     try {
-      const response = await getSuggestionByDepressionLevel(depressionLevel);
+      const response = await getSuggestionByDepressionLevel(levelFromState);
+      console.log("responseNha", response)
       setSuggestions(response.suggestion);
     } catch (err) {
       toast.error("Lỗi khi lấy suggestion", {
@@ -85,7 +91,7 @@ const ReseultServey = () => {
         </h2>
         <div className="max-w-[37.5rem] mx-auto text-center bg-[#e5f1ff] shadow-xl rounded-xl p-4">
           <p className="text-blue-900 font-semibold">Điểm của bạn</p>
-          <p className="my-4 text-blue-900 font-bold text-9xl">{score}</p>
+          <p className="my-4 text-blue-900 font-bold text-9xl">{totalScore}</p>
           <p className="text-blue-900 text-sm">
             {evaluateAnxiety(depressionLevel)}
           </p>
