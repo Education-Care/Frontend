@@ -44,8 +44,11 @@ export const Survey = (props) => {
 
     try {
       // Gửi yêu cầu POST tới API
-      await createPhq9Response(responseData); // Dịch vụ này sẽ thực hiện gửi dữ liệu đến API
-      navigate('/result-survey'); // Sau khi gửi thành công, chuyển tới trang kết quả
+      const response = await createPhq9Response(responseData); // Dịch vụ này sẽ thực hiện gửi dữ liệu đến API
+      const totalScore = response.data.totalScore;
+      const depressionLevel = response.data.depressionLevel;
+      console.log("response", response)
+      navigate('/result-survey', { state: { totalScore, depressionLevel  } }); // Sau khi gửi thành công, chuyển tới trang kết quả
     } catch (error) {
       console.error("Error submitting survey:", error);
     }
