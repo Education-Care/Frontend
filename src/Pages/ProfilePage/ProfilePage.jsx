@@ -15,6 +15,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { getSurveysByUser } from "../../services/surveys";
+import { getSuggestionByDepressionLevel } from "../../services/suggestions"; 
 
 import Chart from "react-apexcharts";
 
@@ -36,6 +38,23 @@ export const MenuProps = {
 
 const ProfilePage = () => {
   const [isEdit, setIsEdit] = useState(false);
+  const [suggestions, setSuggestions] = useState("");
+  const [SurveyData, setSurveyData] = useState([
+      {
+        id: 1,
+        createdAt: "2024-11-28T08:22:28.346Z",
+        totalScore: 15,
+        depressionLevel: "mild_depression"
+      }
+  ]);
+  const [currentRecord, setCurrentRecord] = useState([
+    {
+      id: 1,
+      createdAt: "2024-11-28T08:22:28.346Z",
+      totalScore: 15,
+      depressionLevel: "mild_depression"
+    }
+]);
   const [myInfo, setMyInfo] = useState({
     name: "",
     email: "",
@@ -45,23 +64,63 @@ const ProfilePage = () => {
     phoneNumber: "",
     birthday: "",
   });
-
+  
   useEffect(() => {
     fetchMyInfoByIdAsync();
   }, []);
 
   const fetchMyInfoByIdAsync = async () => {
     try {
-      const id = 3; // Mock ID, sau sẽ lấy từ thông tin đăng nhập
+      const id = 1; // Mock ID, sau sẽ lấy từ thông tin đăng nhập
       const response = await getInfoUserAsync(id);
+      console.log("response", response);
       setMyInfo(response.data);
+      //fetchUserSurveysAsync(id); 
     } catch (error) {
       toast.error("Lỗi khi lấy thông tin người dùng", {
         toastId: "not-found-user",
       });
     }
   };
+  console.log("myInfo", myInfo);
+  useEffect(() => {
+    fetchUserSurveysAsync();
+  }, []);
 
+  const fetchUserSurveysAsync = async () => {
+    try {
+      const userId = 1;
+      const SurveyData = await getSurveysByUser(userId);
+      console.log("responseSurveysByUser", SurveyData);
+      setSurveyData(SurveyData); // Dữ liệu khảo sát của người dùng
+    } catch (error) {
+      toast.error("Lỗi khi lấy dữ liệu khảo sát", { toastId: "fetch-survey-error" });
+    }
+  };
+  console.log("responseSurveysByUser", SurveyData);
+
+  useEffect(() => {
+    const latestRecord = [...SurveyData].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    )[0];
+    setCurrentRecord(latestRecord);
+
+    // Fetch suggestions based on the depression level of the latest survey
+    if (latestRecord?.depressionLevel) {
+      fetchSuggestionByDepressionLevel(latestRecord.depressionLevel);
+    }
+  }, [SurveyData]);
+
+  const fetchSuggestionByDepressionLevel = async (depressionLevel) => {
+    try {
+      const response = await getSuggestionByDepressionLevel(depressionLevel);
+      setSuggestions(response.suggestion); // Set the fetched suggestions
+    } catch (err) {
+      toast.error("Lỗi khi lấy suggestion", {
+        toastId: "not-found-suggestion",
+      });
+    }
+  };
   const handleDateStartChange = (date) => {
     setMyInfo((prev) => ({
       ...prev,
@@ -96,11 +155,35 @@ const ProfilePage = () => {
     }
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return ""; // Nếu không có ngày, trả về chuỗi rỗng
+
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
+  };
+
+
   const options = {
     chart: {
       id: "mood-care-chart",
       toolbar: {
         show: false,
+      },
+      events: {
+        // Xử lý sự kiện khi bấm vào điểm trên chart
+        dataPointSelection: (event, chartContext, config) => {
+          const selectedDate = config.w.globals.seriesX[config.seriesIndex][config.dataPointIndex];
+          const selectedRecord = SurveyData.find(
+            (survey) => survey.createdAt.split("T")[0] === selectedDate
+          );
+          if (selectedRecord) {
+            setCurrentRecord(selectedRecord);
+          }
+        },
       },
     },
     xaxis: {
@@ -110,7 +193,7 @@ const ProfilePage = () => {
       min: 0,
       max: 27,
       labels: {
-        formatter: (value: number) => `${value}`,
+        formatter: (value) => `${value}`,
       },
     },
     stroke: {
@@ -137,38 +220,14 @@ const ProfilePage = () => {
   const series = [
     {
       name: "Score of survey",
-      data: [
-        {
-          x: "2024-11-25",
-          y: 12,
-        },
-        {
-          x: "2024-11-26",
-          y: 8,
-        },
-        {
-          x: "2024-11-27",
-          y: 23,
-        },
-        {
-          x: "2024-11-28",
-          y: 14,
-        },
-        {
-          x: "2024-11-29",
-          y: 27,
-        },
-        {
-          x: "2024-11-30",
-          y: 2,
-        },
-        {
-          x: "2024-12-01",
-          y: 16,
-        },
-      ],
+      data: SurveyData.map((survey) => ({
+        x: survey.createdAt.split("T")[0],
+        y: survey.totalScore,
+      })),
     },
   ];
+  console.log("series", series)
+  console.log("currentRecord", currentRecord)
   return (
     <div className="">
       <div className="flex items-center justify-between w-full gap-12 !bg-white my-4 rounded-xl shadow-lg border-t-[40px] border-t-blue-500 mx-auto max-w-7xl p-6 overflow-hidden">
@@ -382,22 +441,18 @@ const ProfilePage = () => {
             <div className="space-y-4 text-sm">
               <div className="flex justify-between items-center">
                 <span className="text-gray-500">Ngày khảo sát:</span>
-                <span className="font-semibold text-gray-800">30/11/2024</span>
+                <span className="font-semibold text-gray-800">{formatDate(currentRecord?.createdAt)}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-500">Điểm số:</span>
-                <span className="font-semibold text-gray-800">23 điểm</span>
+                <span className="font-semibold text-gray-800">{ currentRecord?.totalScore } điểm</span>
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">
                   Lời khuyên:
                 </h3>
                 <p className="text-gray-700">
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industry's
-                  standard dummy text ever since the 1500s, when an unknown
-                  printer took a galley of type and scrambled it to make a type
-                  specimen book.
+                {suggestions}
                 </p>
               </div>
             </div>
