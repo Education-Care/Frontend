@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Logo from "../../Assets/homepage.png";
-import {faCommentDots, faBars, faXmark,} from "@fortawesome/free-solid-svg-icons";
+import {
+  faCommentDots,
+  faBars,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
+import { Helmet } from "react-helmet"; // Import Helmet for script loading
 import "../../Styles/Navbar.css";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -14,36 +19,22 @@ import MenuIcon from "@mui/icons-material/Menu";
 
 function HeaderComponent() {
   const [nav, setNav] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [chatBotActive, setChatBotActive] = useState(false);
 
+  const [userLogin, setUserLogin] = useState({
+    userId: 1,
+    name: "Thien",
+    isAdmin: true,
+  });
 
-  //06/12/2024: Anhhnl Begin
-  const [userLogin, setUserLogin] = useState(null);
-  //   const [userLogin, setUserLogin] = useState({
-  //   userId: 1,
-  //   name: "Thien",
-  //   isAdmin: true,
-  // });
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedUserLogin = localStorage.getItem("user_login");
-      storedUserLogin && setUserLogin(JSON.parse(storedUserLogin));
-    }
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("user_login");
-    setUserLogin(null);
-  };
-  //06/12/2024: Anhhnl End
-
-
-
-  // const [userLogin, setUserLogin] = useState({
-  //   userId: 1,
-  //   name: "Thien",
-  //   isAdmin: true,
-  // });
-
+  // Sau này có chức năng đăng nhập thì lưu thông tin đăng nhập ở localStorage và mở code này ra
+  // useEffect(() => {
+  //   if (typeof window !== "undefined") {
+  //     const storedUserLogin = localStorage.getItem("user_login");
+  //     storedUserLogin && setUserLogin(JSON.parse(storedUserLogin));
+  //   }
+  // }, []);
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -60,8 +51,34 @@ function HeaderComponent() {
     setNav(!nav);
   };
 
+  const handleChatBtnClick = () => {
+    if (!isButtonDisabled && !chatBotActive) {
+      setIsButtonDisabled(true);
+      setChatBotActive(true);
+      setIsButtonDisabled(false);
+      toast.success("Chatbot is now available!", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+    } else if (chatBotActive) {
+      toast.info("Chatbot is already active!", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+    }
+  };
+
   return (
     <div className="navbar-section">
+      <Helmet>
+        {/* Load FastBots script when the chat button is clicked */}
+        {/* {chatBotActive && (
+          <script
+            defer
+            src="https://app.fastbots.ai/embed.js"
+            data-bot-id="cm1qkyeu700nrn6bk3gm7vwcd"
+          ></script>
+        )} */}
+      </Helmet>
+
       <h1 className="navbar-title">
         <Link to="/">
           <img src={Logo} alt="Edu Care" className="navbar-logo" />
@@ -104,6 +121,14 @@ function HeaderComponent() {
 
       {/* Live Chat Button */}
       <div className="flex gap-4 items-center">
+        <button
+          className="navbar-btn"
+          type="button"
+          disabled={isButtonDisabled}
+          onClick={handleChatBtnClick}
+        >
+          <FontAwesomeIcon icon={faCommentDots} /> Chat bot
+        </button>
         <div className="flex items-center gap-8 text-white">
           <span
             className="flex items-center gap-2 border px-2 py-1 rounded-full cursor-pointer bg-white"
@@ -212,7 +237,7 @@ function HeaderComponent() {
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
               <MenuItem onClick={handleClose}>
-                <Link className="w-full text-gray-600" to ={"/login"}>
+                <Link className="w-full text-gray-600" href={"/"}>
                   Đăng nhập
                 </Link>
               </MenuItem>
