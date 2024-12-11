@@ -1,12 +1,4 @@
-import {
-  Avatar,
-  Button,
-  Chip,
-  FormControl,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
+import { Avatar, Button, Chip, FormControl, MenuItem, Select, TextField, } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { getInfoUserAsync, updateInfoUserAsync } from "../../services/profiles";
@@ -17,14 +9,13 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { getSurveysByUser } from "../../services/surveys";
 import { getSuggestionByDepressionLevel } from "../../services/suggestions"; 
-import { getSurveysById } from "../../services/surveys";
 
 import Chart from "react-apexcharts";
 
 export const genders = [
-  { value: "male", label: "Nam" },
-  { value: "female", label: "Nữ" },
-  { value: "other", label: "Giới tính khác" },
+  { value: "male", label: "Male" },
+  { value: "female", label: "Female" },
+  { value: "other", label: "Others" },
 ];
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -65,20 +56,27 @@ const ProfilePage = () => {
     phoneNumber: "",
     birthday: "",
   });
-  
+  //Anhhnl begin
   useEffect(() => {
-    fetchMyInfoByIdAsync();
+    if (typeof window !== "undefined") {
+      const storedUserInfor = localStorage.getItem("user_login");
+      if (storedUserInfor) {
+        const user = JSON.parse(storedUserInfor);
+        setMyInfo(user);
+        fetchMyInfoByIdAsync(user.userId);
+      }
+    }
   }, []);
+  //Anhhnl end
 
-  const fetchMyInfoByIdAsync = async () => {
+  const fetchMyInfoByIdAsync = async (userId) => {
     try {
-      const id = 1; // Mock ID, sau sẽ lấy từ thông tin đăng nhập
-      const response = await getInfoUserAsync(id);
+      const response = await getInfoUserAsync(userId);
       console.log("response", response);
       setMyInfo(response.data);
       //fetchUserSurveysAsync(id); 
     } catch (error) {
-      toast.error("Lỗi khi lấy thông tin người dùng", {
+      toast.error("Error fetching user information", {
         toastId: "not-found-user",
       });
     }
@@ -95,9 +93,10 @@ const ProfilePage = () => {
       console.log("responseSurveysByUser", SurveyData);
       setSurveyData(SurveyData); // Dữ liệu khảo sát của người dùng
     } catch (error) {
-      toast.error("Lỗi khi lấy dữ liệu khảo sát", { toastId: "fetch-survey-error" });
+      toast.error("Error fetching survey data", { toastId: "fetch-survey-error" });
     }
   };
+  console.log("responseSurveysByUser", SurveyData);
 
   useEffect(() => {
     const latestRecord = [...SurveyData].sort(
@@ -114,10 +113,9 @@ const ProfilePage = () => {
   const fetchSuggestionByDepressionLevel = async (depressionLevel) => {
     try {
       const response = await getSuggestionByDepressionLevel(depressionLevel);
-      console.log("depressionLevel", depressionLevel)
       setSuggestions(response.suggestion); // Set the fetched suggestions
     } catch (err) {
-      toast.error("Lỗi khi lấy suggestion", {
+      toast.error("Error fetching suggestion", {
         toastId: "not-found-suggestion",
       });
     }
@@ -148,9 +146,9 @@ const ProfilePage = () => {
       const response = await updateInfoUserAsync(id, body);
       setMyInfo(response.data);
       setIsEdit(false);
-      toast.success("Chỉnh sửa thông tin thành công");
+      toast.success("Update user information successfully");
     } catch (err) {
-      toast.error("Chỉnh sửa thông tin thất bại", {
+      toast.error("Failed to update information", {
         toastId: "not-found-user",
       });
     }
@@ -167,6 +165,7 @@ const ProfilePage = () => {
     return `${day}-${month}-${year}`;
   };
 
+
   const options = {
     chart: {
       id: "mood-care-chart",
@@ -174,22 +173,14 @@ const ProfilePage = () => {
         show: false,
       },
       events: {
-        // Optional: Handle click events on the chart
-        click: async (event, chartContext, config) => {
-          console.log("Chart clicked", event, config);
-
-          const selectedId =
-            chartContext.w.globals.initialSeries[config.seriesIndex].data[config.dataPointIndex].id;
-          console.log("selectedId", selectedId);
-          if (selectedId) {
-            // Call API để lấy thông tin chi tiết của khảo sát dựa trên ID
-            const response = await getSurveysById(selectedId);
-            if (response) {
-              setCurrentRecord(response);
-              const responseDepressionLevel = await getSuggestionByDepressionLevel(response.depressionLevel);
-              setSuggestions(responseDepressionLevel.suggestion); // Set the fetched suggestions
-              console.log("response_id", response);
-            }
+        // Xử lý sự kiện khi bấm vào điểm trên chart
+        dataPointSelection: (event, chartContext, config) => {
+          const selectedDate = config.w.globals.seriesX[config.seriesIndex][config.dataPointIndex];
+          const selectedRecord = SurveyData.find(
+            (survey) => survey.createdAt.split("T")[0] === selectedDate
+          );
+          if (selectedRecord) {
+            setCurrentRecord(selectedRecord);
           }
         },
       },
@@ -209,10 +200,9 @@ const ProfilePage = () => {
       width: 2,
     },
     markers: {
-      size: 6, // Size of the points
-      hover: {
-        size: 8, // Size when hovered
-      },
+      size: 4,
+      colors: ["#5a96f6"],
+      strokeWidth: 2,
     },
     colors: ["#5a96f6"],
     legend: {
@@ -225,19 +215,18 @@ const ProfilePage = () => {
       borderColor: "#E4E4E7",
     },
   };
+
   const series = [
     {
       name: "Score of survey",
       data: SurveyData.map((survey) => ({
         x: survey.createdAt.split("T")[0],
         y: survey.totalScore,
-        id: survey.id, // Thêm id của khảo sát
       })),
     },
   ];
   console.log("series", series)
   console.log("currentRecord", currentRecord)
-
   return (
     <div className="">
       <div className="flex items-center justify-between w-full gap-12 !bg-white my-4 rounded-xl shadow-lg border-t-[40px] border-t-blue-500 mx-auto max-w-7xl p-6 overflow-hidden">
@@ -269,7 +258,7 @@ const ProfilePage = () => {
           {myInfo?.updatedAt && (
             <Chip
               // color="primary"
-              label={`Lần cuối cập nhật : ${dayjs(myInfo?.updatedAt).format(
+              label={`Last Updated : ${dayjs(myInfo?.updatedAt).format(
                 "DD/MM/YYYY"
               )}`}
               sx={{ backgroundColor: "#fae3ee", color: "#b33871" }}
@@ -282,7 +271,7 @@ const ProfilePage = () => {
               {isEdit ? (
                 <div className="flex gap-4">
                   <Button variant="contained" onClick={handleSaveUpdate}>
-                    Lưu
+                    Save
                   </Button>
                   <Button
                     variant="outlined"
@@ -291,18 +280,18 @@ const ProfilePage = () => {
                       fetchMyInfoByIdAsync();
                     }}
                   >
-                    Hủy
+                    Cancel
                   </Button>
                 </div>
               ) : (
                 <Button variant="outlined" onClick={() => setIsEdit(true)}>
-                  Chỉnh sửa
+                  Edit
                 </Button>
               )}
             </div>
           </div>
           <div className="">
-            <p className="font-medium text-sm pb-2 text-gray-700">Sở thích</p>
+            <p className="font-medium text-sm pb-2 text-gray-700">Hobby</p>
             <textarea
               rows={4}
               className="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-cyan-600 focus:border-blue-500 outline-none
@@ -321,7 +310,7 @@ const ProfilePage = () => {
                 htmlFor="fullName"
                 className="font-medium text-sm pb-2 text-gray-700"
               >
-                Họ tên
+                Full Name
               </label>
               <TextField
                 sx={{
@@ -344,7 +333,7 @@ const ProfilePage = () => {
                 htmlFor="phoneNumber"
                 className="font-medium text-sm pb-2 text-gray-700"
               >
-                Số điện thoại
+                Phone Number
               </label>
               <TextField
                 type="text"
@@ -373,7 +362,7 @@ const ProfilePage = () => {
                 htmlFor="gender"
                 className="font-medium text-sm pb-2 text-gray-700"
               >
-                Giới tính
+                Gender
               </label>
               <FormControl fullWidth sx={{ marginTop: 1.5 }}>
                 <Select
@@ -408,7 +397,7 @@ const ProfilePage = () => {
                 htmlFor="birthday"
                 className="font-medium text-sm pb-2 text-gray-700"
               >
-                Ngày sinh
+                Birthday
               </label>
               <LocalizationProvider
                 dateAdapter={AdapterDayjs}
@@ -446,20 +435,20 @@ const ProfilePage = () => {
         <div className="rounded-xl shadow-lg border p-6 bg-white col-span-1">
           <div>
             <h2 className="text-2xl font-bold text-blue-500 mb-4">
-              Kết quả khảo sát gần nhất
+              Latest Survey Results
             </h2>
             <div className="space-y-4 text-sm">
               <div className="flex justify-between items-center">
-                <span className="text-gray-500">Ngày khảo sát:</span>
+                <span className="text-gray-500">Survey Date:</span>
                 <span className="font-semibold text-gray-800">{formatDate(currentRecord?.createdAt)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-500">Điểm số:</span>
+                <span className="text-gray-500">Score:</span>
                 <span className="font-semibold text-gray-800">{ currentRecord?.totalScore } điểm</span>
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  Lời khuyên:
+                  Suggestion:
                 </h3>
                 <p className="text-gray-700">
                 {suggestions}
