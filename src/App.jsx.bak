@@ -18,7 +18,6 @@ function App() {
               : React.Fragment;
             return (
               <Route
-                key={route.path}
                 path={route.path}
                 element={
                   <Layout>
