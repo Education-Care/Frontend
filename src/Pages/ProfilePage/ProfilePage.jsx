@@ -1,4 +1,12 @@
-import { Avatar, Button, Chip, FormControl, MenuItem, Select, TextField, } from "@mui/material";
+import {
+  Avatar,
+  Button,
+  Chip,
+  FormControl,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { getInfoUserAsync, updateInfoUserAsync } from "../../services/profiles";
@@ -14,9 +22,9 @@ import { getSurveysById } from "../../services/surveys";
 import Chart from "react-apexcharts";
 
 export const genders = [
-  { value: "male", label: "Male" },
-  { value: "female", label: "Female" },
-  { value: "other", label: "Others" },
+  { value: "male", label: "Nam" },
+  { value: "female", label: "Nữ" },
+  { value: "other", label: "Giới tính khác" },
 ];
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -57,27 +65,20 @@ const ProfilePage = () => {
     phoneNumber: "",
     birthday: "",
   });
-  //Anhhnl begin
+  
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedUserInfor = localStorage.getItem("user_login");
-      if (storedUserInfor) {
-        const user = JSON.parse(storedUserInfor);
-        setMyInfo(user);
-        fetchMyInfoByIdAsync(user.userId);
-      }
-    }
+    fetchMyInfoByIdAsync();
   }, []);
-  //Anhhnl end
 
-  const fetchMyInfoByIdAsync = async (userId) => {
+  const fetchMyInfoByIdAsync = async () => {
     try {
-      const response = await getInfoUserAsync(userId);
+      const id = 1; // Mock ID, sau sẽ lấy từ thông tin đăng nhập
+      const response = await getInfoUserAsync(id);
       console.log("response", response);
       setMyInfo(response.data);
       //fetchUserSurveysAsync(id); 
     } catch (error) {
-      toast.error("Error fetching user information", {
+      toast.error("Lỗi khi lấy thông tin người dùng", {
         toastId: "not-found-user",
       });
     }
@@ -94,7 +95,7 @@ const ProfilePage = () => {
       console.log("responseSurveysByUser", SurveyData);
       setSurveyData(SurveyData); // Dữ liệu khảo sát của người dùng
     } catch (error) {
-      toast.error("Error fetching survey data", { toastId: "fetch-survey-error" });
+      toast.error("Lỗi khi lấy dữ liệu khảo sát", { toastId: "fetch-survey-error" });
     }
   };
 
@@ -116,7 +117,7 @@ const ProfilePage = () => {
       console.log("depressionLevel", depressionLevel)
       setSuggestions(response.suggestion); // Set the fetched suggestions
     } catch (err) {
-      toast.error("Error fetching suggestion", {
+      toast.error("Lỗi khi lấy suggestion", {
         toastId: "not-found-suggestion",
       });
     }
@@ -147,9 +148,9 @@ const ProfilePage = () => {
       const response = await updateInfoUserAsync(id, body);
       setMyInfo(response.data);
       setIsEdit(false);
-      toast.success("Update user information successfully");
+      toast.success("Chỉnh sửa thông tin thành công");
     } catch (err) {
-      toast.error("Failed to update information", {
+      toast.error("Chỉnh sửa thông tin thất bại", {
         toastId: "not-found-user",
       });
     }
@@ -268,7 +269,7 @@ const ProfilePage = () => {
           {myInfo?.updatedAt && (
             <Chip
               // color="primary"
-              label={`Last Updated : ${dayjs(myInfo?.updatedAt).format(
+              label={`Lần cuối cập nhật : ${dayjs(myInfo?.updatedAt).format(
                 "DD/MM/YYYY"
               )}`}
               sx={{ backgroundColor: "#fae3ee", color: "#b33871" }}
@@ -281,7 +282,7 @@ const ProfilePage = () => {
               {isEdit ? (
                 <div className="flex gap-4">
                   <Button variant="contained" onClick={handleSaveUpdate}>
-                    Save
+                    Lưu
                   </Button>
                   <Button
                     variant="outlined"
@@ -290,18 +291,18 @@ const ProfilePage = () => {
                       fetchMyInfoByIdAsync();
                     }}
                   >
-                    Cancel
+                    Hủy
                   </Button>
                 </div>
               ) : (
                 <Button variant="outlined" onClick={() => setIsEdit(true)}>
-                  Edit
+                  Chỉnh sửa
                 </Button>
               )}
             </div>
           </div>
           <div className="">
-            <p className="font-medium text-sm pb-2 text-gray-700">Hobby</p>
+            <p className="font-medium text-sm pb-2 text-gray-700">Sở thích</p>
             <textarea
               rows={4}
               className="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-cyan-600 focus:border-blue-500 outline-none
@@ -320,7 +321,7 @@ const ProfilePage = () => {
                 htmlFor="fullName"
                 className="font-medium text-sm pb-2 text-gray-700"
               >
-                Full Name
+                Họ tên
               </label>
               <TextField
                 sx={{
@@ -343,7 +344,7 @@ const ProfilePage = () => {
                 htmlFor="phoneNumber"
                 className="font-medium text-sm pb-2 text-gray-700"
               >
-                Phone Number
+                Số điện thoại
               </label>
               <TextField
                 type="text"
@@ -372,7 +373,7 @@ const ProfilePage = () => {
                 htmlFor="gender"
                 className="font-medium text-sm pb-2 text-gray-700"
               >
-                Gender
+                Giới tính
               </label>
               <FormControl fullWidth sx={{ marginTop: 1.5 }}>
                 <Select
@@ -407,7 +408,7 @@ const ProfilePage = () => {
                 htmlFor="birthday"
                 className="font-medium text-sm pb-2 text-gray-700"
               >
-                Birthday
+                Ngày sinh
               </label>
               <LocalizationProvider
                 dateAdapter={AdapterDayjs}
@@ -445,20 +446,20 @@ const ProfilePage = () => {
         <div className="rounded-xl shadow-lg border p-6 bg-white col-span-1">
           <div>
             <h2 className="text-2xl font-bold text-blue-500 mb-4">
-              Latest Survey Results
+              Kết quả khảo sát gần nhất
             </h2>
             <div className="space-y-4 text-sm">
               <div className="flex justify-between items-center">
-                <span className="text-gray-500">Survey Date:</span>
+                <span className="text-gray-500">Ngày khảo sát:</span>
                 <span className="font-semibold text-gray-800">{formatDate(currentRecord?.createdAt)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-500">Score:</span>
+                <span className="text-gray-500">Điểm số:</span>
                 <span className="font-semibold text-gray-800">{ currentRecord?.totalScore } điểm</span>
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  Suggestion:
+                  Lời khuyên:
                 </h3>
                 <p className="text-gray-700">
                 {suggestions}

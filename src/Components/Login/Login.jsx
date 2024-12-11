@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 // import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -153,6 +153,13 @@ function Login() {
       setLoading(false);
     }
   };
+
+  // Load lại khi nhập mới data 
+  useEffect(() => {
+    if (loading) {
+      setLoading(false);
+    }
+  }, [email, password]);
 
   return (
     <PageContainer>
