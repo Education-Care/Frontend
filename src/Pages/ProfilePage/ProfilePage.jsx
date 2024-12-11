@@ -9,6 +9,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { getSurveysByUser } from "../../services/surveys";
 import { getSuggestionByDepressionLevel } from "../../services/suggestions"; 
+import { getSurveysById } from "../../services/surveys";
 
 import Chart from "react-apexcharts";
 
@@ -96,7 +97,6 @@ const ProfilePage = () => {
       toast.error("Error fetching survey data", { toastId: "fetch-survey-error" });
     }
   };
-  console.log("responseSurveysByUser", SurveyData);
 
   useEffect(() => {
     const latestRecord = [...SurveyData].sort(
@@ -113,6 +113,7 @@ const ProfilePage = () => {
   const fetchSuggestionByDepressionLevel = async (depressionLevel) => {
     try {
       const response = await getSuggestionByDepressionLevel(depressionLevel);
+      console.log("depressionLevel", depressionLevel)
       setSuggestions(response.suggestion); // Set the fetched suggestions
     } catch (err) {
       toast.error("Error fetching suggestion", {
@@ -165,7 +166,6 @@ const ProfilePage = () => {
     return `${day}-${month}-${year}`;
   };
 
-
   const options = {
     chart: {
       id: "mood-care-chart",
@@ -173,14 +173,22 @@ const ProfilePage = () => {
         show: false,
       },
       events: {
-        // Xử lý sự kiện khi bấm vào điểm trên chart
-        dataPointSelection: (event, chartContext, config) => {
-          const selectedDate = config.w.globals.seriesX[config.seriesIndex][config.dataPointIndex];
-          const selectedRecord = SurveyData.find(
-            (survey) => survey.createdAt.split("T")[0] === selectedDate
-          );
-          if (selectedRecord) {
-            setCurrentRecord(selectedRecord);
+        // Optional: Handle click events on the chart
+        click: async (event, chartContext, config) => {
+          console.log("Chart clicked", event, config);
+
+          const selectedId =
+            chartContext.w.globals.initialSeries[config.seriesIndex].data[config.dataPointIndex].id;
+          console.log("selectedId", selectedId);
+          if (selectedId) {
+            // Call API để lấy thông tin chi tiết của khảo sát dựa trên ID
+            const response = await getSurveysById(selectedId);
+            if (response) {
+              setCurrentRecord(response);
+              const responseDepressionLevel = await getSuggestionByDepressionLevel(response.depressionLevel);
+              setSuggestions(responseDepressionLevel.suggestion); // Set the fetched suggestions
+              console.log("response_id", response);
+            }
           }
         },
       },
@@ -200,9 +208,10 @@ const ProfilePage = () => {
       width: 2,
     },
     markers: {
-      size: 4,
-      colors: ["#5a96f6"],
-      strokeWidth: 2,
+      size: 6, // Size of the points
+      hover: {
+        size: 8, // Size when hovered
+      },
     },
     colors: ["#5a96f6"],
     legend: {
@@ -215,18 +224,19 @@ const ProfilePage = () => {
       borderColor: "#E4E4E7",
     },
   };
-
   const series = [
     {
       name: "Score of survey",
       data: SurveyData.map((survey) => ({
         x: survey.createdAt.split("T")[0],
         y: survey.totalScore,
+        id: survey.id, // Thêm id của khảo sát
       })),
     },
   ];
   console.log("series", series)
   console.log("currentRecord", currentRecord)
+
   return (
     <div className="">
       <div className="flex items-center justify-between w-full gap-12 !bg-white my-4 rounded-xl shadow-lg border-t-[40px] border-t-blue-500 mx-auto max-w-7xl p-6 overflow-hidden">

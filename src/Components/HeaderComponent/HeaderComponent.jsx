@@ -14,60 +14,22 @@ import MenuIcon from "@mui/icons-material/Menu";
 
 function HeaderComponent() {
   const [nav, setNav] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [chatBotActive, setChatBotActive] = useState(false);
 
+  const [userLogin, setUserLogin] = useState({
+    userId: 1,
+    name: "Thien",
+    isAdmin: true,
+  });
 
-  //06/12/2024: Anhhnl Begin
-  const [userLogin, setUserLogin] = useState(null);
-  //   const [userLogin, setUserLogin] = useState({
-  //   userId: 1,
-  //   name: "Thien",
-  //   isAdmin: true,
-  // });
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedUserLogin = localStorage.getItem("user_login");
-      storedUserLogin && setUserLogin(JSON.parse(storedUserLogin));
-      
-      //Anhhnl Begin
-      if (storedUserLogin) {
-        const user = JSON.parse(storedUserLogin);
-        toast.success(`Hello ${user.name}, Welcome to EduCare!`, {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      }
-      //Anhhnl End
-    }
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("user_login");
-    setUserLogin(null);
-    toast.success("Logout successful", {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  };
-  //06/12/2024: Anhhnl End
-
-
-
-  // const [userLogin, setUserLogin] = useState({
-  //   userId: 1,
-  //   name: "Thien",
-  //   isAdmin: true,
-  // });
-
+  // Sau này có chức năng đăng nhập thì lưu thông tin đăng nhập ở localStorage và mở code này ra
+  // useEffect(() => {
+  //   if (typeof window !== "undefined") {
+  //     const storedUserLogin = localStorage.getItem("user_login");
+  //     storedUserLogin && setUserLogin(JSON.parse(storedUserLogin));
+  //   }
+  // }, []);
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -84,8 +46,34 @@ function HeaderComponent() {
     setNav(!nav);
   };
 
+  const handleChatBtnClick = () => {
+    if (!isButtonDisabled && !chatBotActive) {
+      setIsButtonDisabled(true);
+      setChatBotActive(true);
+      setIsButtonDisabled(false);
+      toast.success("Chatbot is now available!", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+    } else if (chatBotActive) {
+      toast.info("Chatbot is already active!", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+    }
+  };
+
   return (
     <div className="navbar-section">
+      <Helmet>
+        {/* Load FastBots script when the chat button is clicked */}
+        {/* {chatBotActive && (
+          <script
+            defer
+            src="https://app.fastbots.ai/embed.js"
+            data-bot-id="cm1qkyeu700nrn6bk3gm7vwcd"
+          ></script>
+        )} */}
+      </Helmet>
+
       <h1 className="navbar-title">
         <Link to="/">
           <img src={Logo} alt="Edu Care" className="navbar-logo" />
@@ -128,6 +116,14 @@ function HeaderComponent() {
 
       {/* Live Chat Button */}
       <div className="flex gap-4 items-center">
+        <button
+          className="navbar-btn"
+          type="button"
+          disabled={isButtonDisabled}
+          onClick={handleChatBtnClick}
+        >
+          <FontAwesomeIcon icon={faCommentDots} /> Chat bot
+        </button>
         <div className="flex items-center gap-8 text-white">
           <span
             className="flex items-center gap-2 border px-2 py-1 rounded-full cursor-pointer bg-white"
@@ -167,26 +163,26 @@ function HeaderComponent() {
               transformOrigin={{ horizontal: "right", vertical: "top" }}
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-              {/* <MenuItem onClick={handleClose}>
+              <MenuItem onClick={handleClose}>
                 <Link className="w-full text-gray-600" to={"/history-survey"}>
                   Lịch sử khảo sát
                 </Link>
-              </MenuItem> */}
+              </MenuItem>
               <MenuItem onClick={handleClose}>
                 <Link className="w-full text-gray-600" to={"/profile"}>
-                  Personal Information
+                  Thông tin cá nhân
                 </Link>
               </MenuItem>
               <MenuItem onClick={handleClose}>
                 <Link className="w-full text-gray-600" to={"/"}>
-                  Schedule Appointment
+                  Đặt lịch hẹn
                 </Link>
               </MenuItem>
               {userLogin?.isAdmin && (
                 <div>
                   <MenuItem onClick={handleClose}>
                     <Link className="w-full text-gray-600" to={"/"}>
-                      User Management
+                      Quản lý người dùng
                     </Link>
                   </MenuItem>
                   <MenuItem onClick={handleClose}>
@@ -198,7 +194,7 @@ function HeaderComponent() {
                         hash: "#hash",
                       }}
                     >
-                      Survey Question Management
+                      Quản lý bộ câu hỏi
                     </Link>
                   </MenuItem>
                 </div>
@@ -206,15 +202,15 @@ function HeaderComponent() {
               <Divider />
               <MenuItem onClick={handleClose}>
                 <Link className="w-full text-gray-600" to="/help">
-                  Help Center
+                  Trung tâm trợ giúp
                 </Link>
               </MenuItem>
               <MenuItem onClick={handleClose}>
                 <p
                   className="w-full text-red-600"
-                   onClick={handleLogout}
+                  //  onClick={handleLogout}
                 >
-                  Log Out
+                  Đăng xuất
                 </p>
               </MenuItem>
             </Menu>
@@ -236,8 +232,8 @@ function HeaderComponent() {
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
               <MenuItem onClick={handleClose}>
-                <Link className="w-full text-gray-600" to ={"/login"}>
-                  Log In
+                <Link className="w-full text-gray-600" href={"/"}>
+                  Đăng nhập
                 </Link>
               </MenuItem>
               <Divider light />
@@ -248,7 +244,7 @@ function HeaderComponent() {
               </MenuItem>
               <MenuItem onClick={handleClose}>
                 <Link className="w-full text-gray-600" href="/help">
-                  Help Center
+                  Trung tâm trợ giúp
                 </Link>
               </MenuItem>
             </Menu>
