@@ -4,7 +4,6 @@ import Notfound from "../Pages/NotFoundPage/NotFound";
 import SurveyPage from "../Pages/SurveyPage/SurveyPage";
 import ProfilePage from "../Pages/ProfilePage/ProfilePage";
 import ResultSurvey from "../Pages/ResultSurvey/ResultSurvey";
-import Login from "../Components/Login/Login";
 
 export const routes = [
   {
@@ -30,10 +29,6 @@ export const routes = [
     path: "/result-survey",
     page: ResultSurvey,
     isShowHeader: true,
-  },
-  {
-    path: "/login",
-    page: Login, // Add the login route
   },
   {
     path: "*",
