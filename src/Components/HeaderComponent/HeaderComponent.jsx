@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Logo from "../../Assets/homepage.png";
-import {faCommentDots, faBars, faXmark,} from "@fortawesome/free-solid-svg-icons";
+import {faBars, faXmark,} from "@fortawesome/free-solid-svg-icons";
 import "../../Styles/Navbar.css";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
