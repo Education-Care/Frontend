@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect  } from "react";
+// import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import LogoEduCare from "../../Assets/image-login/logoeducare.png";
@@ -138,31 +138,28 @@ function Login() {
 
     try {
       const response = await http.post("/auth/login", { email, password });
-      const userData = response.data; // Thông tin trả về từ back-end
+      const userData = response.data;
       if (userData) {
-        localStorage.setItem("user_login", JSON.stringify(userData));  
+        localStorage.setItem("user_login", JSON.stringify(userData));
         setError("");
-        navigate("/"); 
+        navigate("/");
       } else {
         setError("Login failed. Please try again.");
       }
     } catch (err) {
       setError(err.response?.data?.message || "Login failed !");
       console.error("Login failed: ", err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  //   try {
-  //     const response = await axios.post("/auth/login", { email, password });
-  //     localStorage.setItem("user_login", JSON.stringify(response.data));
-  //     navigate("/");
-  //   } catch (err) {
-  //     setError(err.response?.data?.message || "Login failed. Please try again.");
-  //     console.error("Login failed: ", err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  // Load lại khi nhập mới data 
+  useEffect(() => {
+    if (loading) {
+      setLoading(false);
+    }
+  }, [email, password]);
 
   return (
     <PageContainer>

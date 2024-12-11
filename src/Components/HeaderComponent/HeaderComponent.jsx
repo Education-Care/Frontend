@@ -27,12 +27,36 @@ function HeaderComponent() {
     if (typeof window !== "undefined") {
       const storedUserLogin = localStorage.getItem("user_login");
       storedUserLogin && setUserLogin(JSON.parse(storedUserLogin));
+      
+      //Anhhnl Begin
+      if (storedUserLogin) {
+        const user = JSON.parse(storedUserLogin);
+        toast.success(`Hello ${user.name}, Welcome to EduCare!`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
+      //Anhhnl End
     }
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("user_login");
     setUserLogin(null);
+    toast.success("Logout successful", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
   };
   //06/12/2024: Anhhnl End
 
@@ -143,26 +167,26 @@ function HeaderComponent() {
               transformOrigin={{ horizontal: "right", vertical: "top" }}
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-              <MenuItem onClick={handleClose}>
+              {/* <MenuItem onClick={handleClose}>
                 <Link className="w-full text-gray-600" to={"/history-survey"}>
                   Lịch sử khảo sát
                 </Link>
-              </MenuItem>
+              </MenuItem> */}
               <MenuItem onClick={handleClose}>
                 <Link className="w-full text-gray-600" to={"/profile"}>
-                  Thông tin cá nhân
+                  Personal Information
                 </Link>
               </MenuItem>
               <MenuItem onClick={handleClose}>
                 <Link className="w-full text-gray-600" to={"/"}>
-                  Đặt lịch hẹn
+                  Schedule Appointment
                 </Link>
               </MenuItem>
               {userLogin?.isAdmin && (
                 <div>
                   <MenuItem onClick={handleClose}>
                     <Link className="w-full text-gray-600" to={"/"}>
-                      Quản lý người dùng
+                      User Management
                     </Link>
                   </MenuItem>
                   <MenuItem onClick={handleClose}>
@@ -174,7 +198,7 @@ function HeaderComponent() {
                         hash: "#hash",
                       }}
                     >
-                      Quản lý bộ câu hỏi
+                      Survey Question Management
                     </Link>
                   </MenuItem>
                 </div>
@@ -182,15 +206,15 @@ function HeaderComponent() {
               <Divider />
               <MenuItem onClick={handleClose}>
                 <Link className="w-full text-gray-600" to="/help">
-                  Trung tâm trợ giúp
+                  Help Center
                 </Link>
               </MenuItem>
               <MenuItem onClick={handleClose}>
                 <p
                   className="w-full text-red-600"
-                  //  onClick={handleLogout}
+                   onClick={handleLogout}
                 >
-                  Đăng xuất
+                  Log Out
                 </p>
               </MenuItem>
             </Menu>
@@ -213,7 +237,7 @@ function HeaderComponent() {
             >
               <MenuItem onClick={handleClose}>
                 <Link className="w-full text-gray-600" to ={"/login"}>
-                  Đăng nhập
+                  Log In
                 </Link>
               </MenuItem>
               <Divider light />
@@ -224,7 +248,7 @@ function HeaderComponent() {
               </MenuItem>
               <MenuItem onClick={handleClose}>
                 <Link className="w-full text-gray-600" href="/help">
-                  Trung tâm trợ giúp
+                  Help Center
                 </Link>
               </MenuItem>
             </Menu>
