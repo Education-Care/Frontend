@@ -140,15 +140,22 @@ function Login() {
     try {
       const response = await http.post("/auth/login", { email, password });
       const userData = response.data;
+    
       if (userData) {
         localStorage.setItem("user_login", JSON.stringify(userData));
         setError("");
-        navigate("/");
+    
+        // Kiểm tra nếu người dùng là admin
+        if (userData.isAdmin) {
+          navigate("/Admin-Dashboard"); // Điều hướng đến trang Dashboard nếu là admin
+        } else {
+          navigate("/"); // Điều hướng đến trang chủ nếu không phải admin
+        }
       } else {
         setError("Login failed. Please try again.");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed !");
+      setError(err.response?.data?.message || "Login failed!");
       console.error("Login failed: ", err);
     } finally {
       setLoading(false);

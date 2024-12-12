@@ -5,6 +5,10 @@ import SurveyPage from "../Pages/SurveyPage/SurveyPage";
 import ProfilePage from "../Pages/ProfilePage/ProfilePage";
 import ResultSurvey from "../Pages/ResultSurvey/ResultSurvey";
 import Login from "../Components/Login/Login";
+import DashboardPage from "../Components/Admin/DashboardPage";
+import SurveyManagementPage from "../Components/Admin/SurveyManagementPage";
+import UserManagementPage  from "../Components/Admin/UserManagementPage";
+import Layout from "../Components/Admin/Layout";
 
 export const routes = [
   {
@@ -33,7 +37,27 @@ export const routes = [
   },
   {
     path: "/login",
-    page: Login, // Add the login route
+    page: Login,
+  },
+  {
+    path: "/Admin",
+    page: Layout,
+    isShowHeader: true,
+  },
+  {
+    path: "/Admin-Dashboard",
+    page: DashboardPage,
+    isShowHeader: true,
+  },
+  {
+    path: "/SurveyManagement",
+    page: SurveyManagementPage,
+    isShowHeader: true,
+  },
+  {
+    path: "/UserManagementPage",
+    page: UserManagementPage,
+    isShowHeader: true,
   },
   {
     path: "*",
