@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Logo from "../../Assets/homepage.png";
-import {faBars, faXmark,} from "@fortawesome/free-solid-svg-icons";
+import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import "../../Styles/Navbar.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import { Avatar, Divider } from "@mui/material";
@@ -14,21 +14,15 @@ import MenuIcon from "@mui/icons-material/Menu";
 
 function HeaderComponent() {
   const [nav, setNav] = useState(false);
-
-
-  //06/12/2024: Anhhnl Begin
   const [userLogin, setUserLogin] = useState(null);
-  //   const [userLogin, setUserLogin] = useState({
-  //   userId: 1,
-  //   name: "Thien",
-  //   isAdmin: true,
-  // });
+  
+  const navigate = useNavigate(); // Hook để chuyển hướng trang
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedUserLogin = localStorage.getItem("user_login");
       storedUserLogin && setUserLogin(JSON.parse(storedUserLogin));
-      
-      //Anhhnl Begin
+
       if (storedUserLogin) {
         const user = JSON.parse(storedUserLogin);
         toast.success(`Hello ${user.name}, Welcome to EduCare!`, {
@@ -41,7 +35,6 @@ function HeaderComponent() {
           progress: undefined,
         });
       }
-      //Anhhnl End
     }
   }, []);
 
@@ -57,17 +50,9 @@ function HeaderComponent() {
       draggable: true,
       progress: undefined,
     });
+    
+    navigate("/"); // Chuyển hướng về trang chủ sau khi logout
   };
-  //06/12/2024: Anhhnl End
-
-
-
-  // const [userLogin, setUserLogin] = useState({
-  //   userId: 1,
-  //   name: "Thien",
-  //   isAdmin: true,
-  // });
-
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -76,6 +61,7 @@ function HeaderComponent() {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -94,36 +80,41 @@ function HeaderComponent() {
 
       {/* Desktop */}
       <ul className="navbar-items">
-        <li>
-          <Link to="/" className="navbar-links">
-            Home
-          </Link>
-        </li>
-        <li>
-          <a href="#services" className="navbar-links">
-            Services
-          </a>
-        </li>
-        <li>
-          <a href="#about" className="navbar-links">
-            About
-          </a>
-        </li>
-        <li>
-          <a href="#reviews" className="navbar-links">
-            Reviews
-          </a>
-        </li>
-        <li>
-          <a href="#doctors" className="navbar-links">
-            Doctors
-          </a>
-        </li>
-        <li>
-          <a href="/EduCare/survey" className="navbar-links">
-            Survey
-          </a>
-        </li>
+        {/* Only show the menu if the user is not an admin */}
+        {!userLogin?.isAdmin && (
+          <>
+            <li>
+              <Link to="/" className="navbar-links">
+                Home
+              </Link>
+            </li>
+            <li>
+              <a href="#services" className="navbar-links">
+                Services
+              </a>
+            </li>
+            <li>
+              <a href="#about" className="navbar-links">
+                About
+              </a>
+            </li>
+            <li>
+              <a href="#reviews" className="navbar-links">
+                Reviews
+              </a>
+            </li>
+            <li>
+              <a href="#doctors" className="navbar-links">
+                Doctors
+              </a>
+            </li>
+            <li>
+              <a href="/EduCare/survey" className="navbar-links">
+                Survey
+              </a>
+            </li>
+          </>
+        )}
       </ul>
 
       {/* Live Chat Button */}
@@ -144,11 +135,7 @@ function HeaderComponent() {
                   ? { width: 30, height: 30, bgcolor: "#1A8EFD" }
                   : { width: 30, height: 30 }
               }
-              src={
-                userLogin && userLogin.avatarUrl
-                  ? `${userLogin?.avatarUrl}`
-                  : ``
-              }
+              src={userLogin?.avatarUrl || ""}
             />
           </span>
           {userLogin && (
@@ -167,42 +154,43 @@ function HeaderComponent() {
               transformOrigin={{ horizontal: "right", vertical: "top" }}
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-              {/* <MenuItem onClick={handleClose}>
-                <Link className="w-full text-gray-600" to={"/history-survey"}>
-                  Lịch sử khảo sát
-                </Link>
-              </MenuItem> */}
-              <MenuItem onClick={handleClose}>
-                <Link className="w-full text-gray-600" to={"/profile"}>
-                  Personal Information
-                </Link>
-              </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <Link className="w-full text-gray-600" to={"/"}>
-                  Schedule Appointment
-                </Link>
-              </MenuItem>
+              {/* User-specific menu items */}
+              {!userLogin?.isAdmin && (
+                <>
+                  <MenuItem onClick={handleClose}>
+                    <Link className="w-full text-gray-600" to={"/profile"}>
+                      Personal Information
+                    </Link>
+                  </MenuItem>
+                  <MenuItem onClick={handleClose}>
+                    <Link className="w-full text-gray-600" to={"/"}>
+                      Schedule Appointment
+                    </Link>
+                  </MenuItem>
+                </>
+              )}
+
+              {/* Admin-specific menu items */}
               {userLogin?.isAdmin && (
                 <div>
                   <MenuItem onClick={handleClose}>
-                    <Link className="w-full text-gray-600" to={"/"}>
+                    <Link className="w-full text-gray-600" to={"/SurveyManagement"}>
+                      Survey Question Management
+                    </Link>
+                  </MenuItem>
+                  <MenuItem onClick={handleClose}>
+                    <Link className="w-full text-gray-600" to={"/UserManagementPage"}>
                       User Management
                     </Link>
                   </MenuItem>
                   <MenuItem onClick={handleClose}>
-                    <Link
-                      className="w-full text-gray-600"
-                      to={{
-                        pathname: "/some/path",
-                        search: "?query=string",
-                        hash: "#hash",
-                      }}
-                    >
-                      Survey Question Management
+                    <Link className="w-full text-gray-600" to={"/Admin-Dashboard"}>
+                      Dashboard
                     </Link>
                   </MenuItem>
                 </div>
               )}
+
               <Divider />
               <MenuItem onClick={handleClose}>
                 <Link className="w-full text-gray-600" to="/help">
@@ -210,10 +198,7 @@ function HeaderComponent() {
                 </Link>
               </MenuItem>
               <MenuItem onClick={handleClose}>
-                <p
-                  className="w-full text-red-600"
-                   onClick={handleLogout}
-                >
+                <p className="w-full text-red-600" onClick={handleLogout}>
                   Log Out
                 </p>
               </MenuItem>
@@ -236,18 +221,13 @@ function HeaderComponent() {
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
               <MenuItem onClick={handleClose}>
-                <Link className="w-full text-gray-600" to ={"/login"}>
+                <Link className="w-full text-gray-600" to={"/login"}>
                   Log In
                 </Link>
               </MenuItem>
               <Divider light />
               <MenuItem onClick={handleClose}>
-                <Link className="w-full text-gray-600" href="/become-host">
-                  Talk To Us
-                </Link>
-              </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <Link className="w-full text-gray-600" href="/help">
+                <Link className="w-full text-gray-600" to="/help">
                   Help Center
                 </Link>
               </MenuItem>
