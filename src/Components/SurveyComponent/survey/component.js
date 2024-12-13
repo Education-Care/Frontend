@@ -30,9 +30,9 @@ export const Survey = (props) => {
 
   // Trigger backend update when form is submitted
   const triggerBackendUpdate = async () => {
-    // Tạo đối tượng response theo mẫu CreatePhq9ResponseDto
-    const responseData = {
-      userId: JSON.parse(localStorage.getItem("user_login")).userId, // Giả sử userId là 1, bạn có thể thay bằng dữ liệu thực tế
+    const userLogin = localStorage.getItem("user_login");
+  const responseData = {
+    ...(userLogin && { userId: JSON.parse(userLogin).userId }),
       answers: Object.keys(surveyValues).map(key => {
         const questionId = parseInt(key); // key chính là id câu hỏi
         return {
