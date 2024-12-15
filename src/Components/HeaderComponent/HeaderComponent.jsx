@@ -113,6 +113,12 @@ function HeaderComponent() {
                 Survey
               </a>
             </li>
+            <li>
+              <a href="/EduCare/Entertainment" className="navbar-links">
+                Entertainment
+              </a>
+            </li>
+            
           </>
         )}
       </ul>
