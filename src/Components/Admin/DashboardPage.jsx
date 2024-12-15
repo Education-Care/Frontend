@@ -7,8 +7,6 @@ import {
   Box,
   Checkbox,
   FormControlLabel,
-  Button,
-  CircularProgress
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -16,7 +14,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import Chart from 'react-apexcharts';
-import { RefreshOutlined } from '@mui/icons-material';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -28,7 +25,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 const depressionLevels = ["Normal", "Mild", "Moderate", "Severe", "Extremely Severe"];
 
 // Simulating data fetching
-const fetchData = () => {
+const fetchData = (startDate, endDate) => {
   return new Promise((resolve) => {
     setTimeout(() => {
       const barChartData = depressionLevels.map((level) => ({
@@ -36,8 +33,8 @@ const fetchData = () => {
         y: Math.floor(Math.random() * 100),
       }));
 
-      const lineChartData = Array.from({ length: 12 }, (_, i) => ({
-        x: `Month ${i + 1}`,
+      const lineChartData = Array.from({ length: 30 }, (_, i) => ({
+        x: dayjs(startDate).add(i, 'day').format('YYYY-MM-DD'),
         y: depressionLevels.map(() => Math.floor(Math.random() * 100)),
       }));
 
@@ -50,8 +47,7 @@ export default function DashboardPage() {
   const [selectedLevels, setSelectedLevels] = useState(depressionLevels);
   const [barChartData, setBarChartData] = useState([]);
   const [lineChartData, setLineChartData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [dateRange, setDateRange] = useState([dayjs(), dayjs()]);
+  const [dateRange, setDateRange] = useState([dayjs().subtract(30, 'day'), dayjs()]);
 
   const handleLevelToggle = (level) => {
     setSelectedLevels((prev) =>
@@ -60,16 +56,14 @@ export default function DashboardPage() {
   };
 
   const loadData = async () => {
-    setIsLoading(true);
-    const { barChartData, lineChartData } = await fetchData();
+    const { barChartData, lineChartData } = await fetchData(dateRange[0], dateRange[1]);
     setBarChartData(barChartData);
     setLineChartData(lineChartData);
-    setIsLoading(false);
   };
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [dateRange, selectedLevels]);
 
   const barChartOptions = {
     chart: {
@@ -89,6 +83,7 @@ export default function DashboardPage() {
       type: 'line',
     },
     xaxis: {
+      type: 'datetime',
       categories: lineChartData.map(data => data.x),
     },
     title: {
@@ -99,19 +94,9 @@ export default function DashboardPage() {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Dashboard
-        </Typography>
-        <Button 
-          variant="contained" 
-          startIcon={<RefreshOutlined />} 
-          onClick={loadData}
-          disabled={isLoading}
-        >
-          Refresh Data
-        </Button>
-      </Box>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Dashboard
+      </Typography>
       <Grid container spacing={3}>
         {['Total Users', 'Active Users', 'Total Surveys', 'Avg. Depression Level'].map((title, index) => (
           <Grid item xs={12} md={3} key={index}>
@@ -120,7 +105,7 @@ export default function DashboardPage() {
                 {title}
               </Typography>
               <Typography component="p" variant="h4">
-                {isLoading ? <CircularProgress size={24} /> : ['1,234', '1,000', '56', 'Mild'][index]}
+                {['1,234', '1,000', '56', 'Mild'][index]}
               </Typography>
             </StyledPaper>
           </Grid>
@@ -130,18 +115,12 @@ export default function DashboardPage() {
             <Typography component="h2" variant="h6" color="primary" gutterBottom>
               Depression Levels Distribution
             </Typography>
-            {isLoading ? (
-              <Box display="flex" justifyContent="center" alignItems="center" height={350}>
-                <CircularProgress />
-              </Box>
-            ) : (
-              <Chart 
-                options={barChartOptions} 
-                series={[{ data: barChartData }]} 
-                type="bar" 
-                height={350} 
-              />
-            )}
+            <Chart 
+              options={barChartOptions} 
+              series={[{ data: barChartData }]} 
+              type="bar" 
+              height={350} 
+            />
           </StyledPaper>
         </Grid>
         <Grid item xs={12} md={6}>
@@ -178,25 +157,18 @@ export default function DashboardPage() {
                 />
               </Box>
             </LocalizationProvider>
-            {isLoading ? (
-              <Box display="flex" justifyContent="center" alignItems="center" height={350}>
-                <CircularProgress />
-              </Box>
-            ) : (
-              <Chart 
-                options={lineChartOptions} 
-                series={selectedLevels.map((level, index) => ({
-                  name: level,
-                  data: lineChartData.map(data => data.y[index]),
-                }))} 
-                type="line" 
-                height={350} 
-              />
-            )}
+            <Chart 
+              options={lineChartOptions} 
+              series={selectedLevels.map((level, index) => ({
+                name: level,
+                data: lineChartData.map(data => data.y[index]),
+              }))} 
+              type="line" 
+              height={350} 
+            />
           </StyledPaper>
         </Grid>
       </Grid>
     </Container>
   );
 }
-
