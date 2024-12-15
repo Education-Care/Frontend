@@ -2,6 +2,9 @@ import http from "../../lib/http";
 
 const controller = new AbortController();
 
+export const getAllInfoUserAsync = () => {
+  return http.get(`/users`, { signal: controller.signal });
+};
 export const getInfoUserAsync = (id) => {
   return http.get(`/users/${id}`, { signal: controller.signal });
 };
