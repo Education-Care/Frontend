@@ -15,6 +15,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import Chart from "react-apexcharts";
 import { TotalUsers, TotalSurveys, AvgDepLevel } from "./Cards";
+import { DepLevel } from "./Charts";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -70,6 +71,7 @@ export default function DashboardPage() {
       dateRange[0],
       dateRange[1]
     );
+
     setBarChartData(barChartData);
     setLineChartData(lineChartData);
   };
@@ -115,24 +117,7 @@ export default function DashboardPage() {
         <TotalSurveys />
         <AvgDepLevel />
 
-        <Grid item xs={12} md={6}>
-          <StyledPaper>
-            <Typography
-              component="h2"
-              variant="h6"
-              color="primary"
-              gutterBottom
-            >
-              Depression Levels Distribution
-            </Typography>
-            <Chart
-              options={barChartOptions}
-              series={[{ data: barChartData }]}
-              type="bar"
-              height={350}
-            />
-          </StyledPaper>
-        </Grid>
+        <DepLevel />
         <Grid item xs={12} md={6}>
           <StyledPaper>
             <Typography
