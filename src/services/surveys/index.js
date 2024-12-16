@@ -8,3 +8,7 @@ export const getSurveysByUser = async (userId) => {
 export const getSurveysById = async (Id) => {
   return http.get(`/surveys/${Id}`, { signal: controller.signal });
 };
+
+export const getSurveys = async () => {
+  return http.get("/surveys", { signal: controller.signal });
+};

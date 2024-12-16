@@ -32,7 +32,7 @@ function HeaderComponent() {
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
-          progress: undefined,
+          toastId: "welcome",
         });
       }
     }

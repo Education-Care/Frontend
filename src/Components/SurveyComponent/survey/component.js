@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import "../../../Styles/Survey.css";
-import { useNavigate } from 'react-router-dom';
-import { getQuestionRandomAsync } from '../../../services/questions';
-import { verifyTextInputType } from './validators';
-import { createPhq9Response } from '../../../services/Responses';
-import { SurveyRadioInput } from './inputs';
+import { useNavigate } from "react-router-dom";
+import { getQuestionRandomAsync } from "../../../services/questions";
+import { verifyTextInputType } from "./validators";
+import { createPhq9Response } from "../../../services/responses";
+import { SurveyRadioInput } from "./inputs";
 
 export const Survey = (props) => {
   const [page, setPage] = useState(1);
@@ -24,16 +24,16 @@ export const Survey = (props) => {
   };
 
   useEffect(() => {
-    console.log('useEffect has been called!');
+    console.log("useEffect has been called!");
     fetchListRandomQuestion(); // Call function to fetch questions when component mounts
   }, []);
 
   // Trigger backend update when form is submitted
   const triggerBackendUpdate = async () => {
     const userLogin = localStorage.getItem("user_login");
-  const responseData = {
-    ...(userLogin && { userId: JSON.parse(userLogin).userId }),
-      answers: Object.keys(surveyValues).map(key => {
+    const responseData = {
+      ...(userLogin && { userId: JSON.parse(userLogin).userId }),
+      answers: Object.keys(surveyValues).map((key) => {
         const questionId = parseInt(key); // key chính là id câu hỏi
         return {
           questionId,
@@ -47,8 +47,8 @@ export const Survey = (props) => {
       const response = await createPhq9Response(responseData); // Dịch vụ này sẽ thực hiện gửi dữ liệu đến API
       const totalScore = response.data.totalScore;
       const depressionLevel = response.data.depressionLevel;
-      console.log("response", response)
-      navigate('/result-survey', { state: { totalScore, depressionLevel  } }); // Sau khi gửi thành công, chuyển tới trang kết quả
+      console.log("response", response);
+      navigate("/result-survey", { state: { totalScore, depressionLevel } }); // Sau khi gửi thành công, chuyển tới trang kết quả
     } catch (error) {
       console.error("Error submitting survey:", error);
     }
@@ -69,13 +69,16 @@ export const Survey = (props) => {
         updatedSurveyValues[formInput.name] = formInput.value; // Cập nhật surveyValues
       }
 
-      if (formInput.type === 'select-one') {
+      if (formInput.type === "select-one") {
         updatedSurveyValues[formInput.name] = formInput.value;
       }
 
-      if (formInput.type === 'select-multiple') {
-        const selected = [].filter.call(formInput.options, option => option.selected);
-        const values = selected.map(option => option.value);
+      if (formInput.type === "select-multiple") {
+        const selected = [].filter.call(
+          formInput.options,
+          (option) => option.selected
+        );
+        const values = selected.map((option) => option.value);
         updatedSurveyValues[formInput.name] = values;
       }
 
@@ -87,7 +90,9 @@ export const Survey = (props) => {
     setSurveyValues(updatedSurveyValues); // Cập nhật lại state surveyValues
 
     const nextPage = page + 1;
-    const inputs = loadedInputs ? loadedInputs.filter(inputOption => inputOption.id === nextPage) : [];
+    const inputs = loadedInputs
+      ? loadedInputs.filter((inputOption) => inputOption.id === nextPage)
+      : [];
 
     if (isFinalPage) {
       triggerBackendUpdate(); // Gọi API khi đến trang cuối cùng
@@ -101,18 +106,22 @@ export const Survey = (props) => {
   };
 
   // Get the current inputs for the current page
-  const inputs = loadedInputs ? loadedInputs.filter(inputOption => inputOption.id === page) : [];
+  const inputs = loadedInputs
+    ? loadedInputs.filter((inputOption) => inputOption.id === page)
+    : [];
 
   return (
     <div className="survey-container">
       <div className="survey-introduction">
         <div className="logo-container">
-          <h2 className="survey-title" id="page-logo">EduCare</h2>
+          <h2 className="survey-title" id="page-logo">
+            EduCare
+          </h2>
         </div>
         <p className="survey-description">
           Bảng câu hỏi sức khỏe bệnh nhân (PHQ-9)
         </p>
-        <h3 className='survey-title_sub'>Trong 2 tuần qua</h3>
+        <h3 className="survey-title_sub">Trong 2 tuần qua</h3>
         <p className="survey-description">
           Bạn có thường xuyên cảm thấy khó chịu do những vấn đề sau đây không?
         </p>
@@ -120,7 +129,7 @@ export const Survey = (props) => {
       <form onSubmit={handleSubmit}>
         {isFinalPage !== true &&
           inputs.map((obj, index) => {
-            const className = 'form-control mb-2 animated fadeIn';
+            const className = "form-control mb-2 animated fadeIn";
             const inputKey = `input-${index}-${page}`;
             return (
               <SurveyRadioInput

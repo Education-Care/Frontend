@@ -4,7 +4,7 @@ const controller = new AbortController();
 
 export const createPhq9Response = (responseData) => {
   return http.post(`/phq9-responses`, responseData, {
-    signal: controller.signal,  // Thêm tín hiệu hủy yêu cầu
+    signal: controller.signal, // Thêm tín hiệu hủy yêu cầu
   });
 };
 // export const getQuestionRandomAsync = () => {
@@ -13,3 +13,7 @@ export const createPhq9Response = (responseData) => {
 // export const updateInfoUserAsync = (id, body) => {
 //   return http.patch(`/users/${id}`, body, { signal: controller.signal });
 // };
+
+export const getPhq9Responses = async () => {
+  return http.get(`/phq9-responses`, { signal: controller.signal });
+};
