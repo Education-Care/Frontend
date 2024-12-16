@@ -1,9 +1,11 @@
+/* eslint-disable jsx-a11y/iframe-has-title */
 import React from "react";
 import { Button, Card, CardContent } from "@mui/material";
 import { Close } from "@mui/icons-material";
 
 export function CurrentlyPlaying({ playingItem, onClose }) {
   if (!playingItem) return null;
+  const isPodcast = playingItem.type === "podcast";
 
   return (
     <Card
@@ -21,16 +23,23 @@ export function CurrentlyPlaying({ playingItem, onClose }) {
       }}
     >
       <CardContent style={{ padding: "16px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
           <div style={{ flex: 1 }}>
             {/* Spotify Embed */}
             <iframe
-              src={`https://open.spotify.com/embed/track/${playingItem.trackId}`}
+              src={`https://open.spotify.com/embed/${
+                isPodcast ? "episode" : "track"
+              }/${playingItem.id}`}
               width="100%"
               height="80"
-              frameBorder="0"
               allow="encrypted-media"
-              style={{ borderRadius: "8px" }}
+              className="rounded-md"
             ></iframe>
           </div>
           <div style={{ marginLeft: "16px" }}>

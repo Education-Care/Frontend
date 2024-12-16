@@ -1,34 +1,42 @@
-import React from 'react';
-import { Card, CardContent, Button } from '@mui/material';
-import { PlayCircle } from '@mui/icons-material';
+import React from "react";
+import { Card, CardContent, Button } from "@mui/material";
+import { PlayCircle } from "@mui/icons-material";
 
 export function PodcastGrid({ onPlay, podcasts }) {
   return (
-    <div style={{ display: ' grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
       {podcasts.map((podcast) => (
         <Card key={podcast.id}>
-          <CardContent style={{ padding: '16px' }}>
+          <CardContent className="p-4 relative h-full">
             <img
-              src={podcast.images[0]?.url || "/placeholder.svg?height=200&width=200"}
+              src={
+                podcast.images[0]?.url ||
+                "/placeholder.svg?height=200&width=200"
+              }
               alt={podcast.name}
-              style={{ width: '100%', height: 'auto', borderRadius: '4px', marginBottom: '8px' }}
+              className="w-full rounded-md mb-2"
             />
-            <h3 style={{ fontWeight: '600', fontSize: '1.125rem' }}>{podcast.name}</h3>
-            <p style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '8px' }}>
+            <h3
+              className="font-semibold text-lg mb-2 line-clamp-2"
+              title={podcast.name}
+            >
+              {podcast.name}
+            </h3>
+            <p className="text-sm text-gray-500 mb-2">
               {podcast.publisher || podcast.show?.name}
             </p>
-            <Button 
-              variant="outlined" 
-              size="small" 
-              style={{ width: '100%', borderColor: '#2baadf', color: '#2baadf' }}
-              onClick={() => onPlay({ 
-                type: 'podcast', 
-                title: podcast.name, 
-                creator: podcast.publisher || podcast.show?.name,
-                imageUrl: podcast.images[0]?.url
-              })}
+            <Button
+              variant="outlined"
+              size="small"
+              className="bottom-0 right-0 left-0 !relative w-full text-[#2baadf] border-[#2baadf]"
+              onClick={() => {
+                onPlay({
+                  type: "podcast",
+                  id: podcast.id,
+                });
+              }}
             >
-              <PlayCircle style={{ marginRight: '8px' }} /> Play
+              <PlayCircle className="mr-2" /> Play
             </Button>
           </CardContent>
         </Card>

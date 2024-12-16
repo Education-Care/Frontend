@@ -15,7 +15,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 function HeaderComponent() {
   const [nav, setNav] = useState(false);
   const [userLogin, setUserLogin] = useState(null);
-  
+
   const navigate = useNavigate(); // Hook để chuyển hướng trang
 
   useEffect(() => {
@@ -50,7 +50,7 @@ function HeaderComponent() {
       draggable: true,
       progress: undefined,
     });
-    
+
     navigate("/"); // Chuyển hướng về trang chủ sau khi logout
   };
 
@@ -89,26 +89,6 @@ function HeaderComponent() {
               </Link>
             </li>
             <li>
-              <a href="#services" className="navbar-links">
-                Services
-              </a>
-            </li>
-            <li>
-              <a href="#about" className="navbar-links">
-                About
-              </a>
-            </li>
-            <li>
-              <a href="#reviews" className="navbar-links">
-                Reviews
-              </a>
-            </li>
-            <li>
-              <a href="#doctors" className="navbar-links">
-                Doctors
-              </a>
-            </li>
-            <li>
               <a href="/EduCare/survey" className="navbar-links">
                 Survey
               </a>
@@ -118,7 +98,6 @@ function HeaderComponent() {
                 Entertainment
               </a>
             </li>
-            
           </>
         )}
       </ul>
@@ -180,17 +159,26 @@ function HeaderComponent() {
               {userLogin?.isAdmin && (
                 <div>
                   <MenuItem onClick={handleClose}>
-                    <Link className="w-full text-gray-600" to={"/SurveyManagement"}>
+                    <Link
+                      className="w-full text-gray-600"
+                      to={"/SurveyManagement"}
+                    >
                       Survey Question Management
                     </Link>
                   </MenuItem>
                   <MenuItem onClick={handleClose}>
-                    <Link className="w-full text-gray-600" to={"/UserManagementPage"}>
+                    <Link
+                      className="w-full text-gray-600"
+                      to={"/UserManagementPage"}
+                    >
                       User Management
                     </Link>
                   </MenuItem>
                   <MenuItem onClick={handleClose}>
-                    <Link className="w-full text-gray-600" to={"/Admin-Dashboard"}>
+                    <Link
+                      className="w-full text-gray-600"
+                      to={"/Admin-Dashboard"}
+                    >
                       Dashboard
                     </Link>
                   </MenuItem>
