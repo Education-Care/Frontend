@@ -17,3 +17,15 @@ export const createPhq9Response = (responseData) => {
 export const getPhq9Responses = async () => {
   return http.get(`/phq9-responses`, { signal: controller.signal });
 };
+
+export const getDepressionLevel = async ({ from, to }) => {
+  try {
+    const data = await http.get(`/phq9-responses/depression-level`, {
+      signal: controller.signal,
+      params: { from, to },
+    });
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+};
