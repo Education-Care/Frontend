@@ -126,7 +126,7 @@ export const Survey = (props) => {
           Bạn có thường xuyên cảm thấy khó chịu do những vấn đề sau đây không?
         </p>
       </div>
-      <form onSubmit={handleSubmit}>
+      <form className="survey-form" onSubmit={handleSubmit}>
         {isFinalPage !== true &&
           inputs.map((obj, index) => {
             const className = "form-control mb-2 animated fadeIn";

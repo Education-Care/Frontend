@@ -90,7 +90,7 @@ function HeaderComponent() {
             </li>
             <li>
               <a href="/EduCare/survey" className="navbar-links">
-                Survey
+                Assessments
               </a>
             </li>
             <li>

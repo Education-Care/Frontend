@@ -1,6 +1,6 @@
 /* Toàn bộ trang */
 body {
-    font-family: Playfair Display;
+    
     font-size: 25px;
     background: #f1f1f1;
     color: #333;
@@ -64,9 +64,17 @@ form {
     margin-bottom: 15px;
 }
 
+.survey-form{
+  border-radius: 12px;
+  max-width: 900px;
+  box-shadow: 0 10px 25px rgba(156, 159, 161, 0.3);
+}
 /* Các tùy chọn */
 .form-check {
     display: flex;
+    background-color: #eef3f8;
+    padding: 10px 10px;
+    border-radius: 12px;
     align-items: center;
     margin-bottom: 15px;
 }
@@ -78,20 +86,21 @@ form {
 }
 
 .form-check-label {
+    margin-top: 0px;
     font-size: 18px;
     color: #555;
 }
 
-.form-check-label:hover {
+.form-check:hover {
     color: #540303;
-    font: bold;
+    font-weight: bold;
     transform: translateY(-3px);
-    font-size: 20px;
+    background-color: #76aefd;
 }
 
 /* Hiệu ứng nút */
 button {
-    background-color: #A4C18B;
+    background-color: #bad7f7;
     color: #fff;
     padding: 12px 20px;
     border: none;
@@ -102,9 +111,9 @@ button {
 }
 
 button:hover {
-    background-color: #8CA175;
+    background-color: #a9d7f8;
     transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 25px rgba(148, 210, 246, 0.3);
 }
 .button-container {
     display: flex;
@@ -143,12 +152,13 @@ button:hover {
     }
     100% {
       transform: translateY(0);
-      background-color: #28a745;
+      background-color: #99d3f9;
     }
   }
   
   .continue-btn {
-    background-color: #4CAF50;
+    background-color: #074be8;
+    border-radius: 18px;
     color: #ffffff;
     border: none;
     padding: 10px 20px;
@@ -159,6 +169,7 @@ button:hover {
 
   .present-btn {
     background-color: #bbbbbb;
+    border-radius: 18px;
     color: #ffffff;
     border: none;
     padding: 10px 20px;
@@ -182,22 +193,19 @@ button:hover {
     font-size: 24px;
     font-weight: bold;
     color: #002167;
-    font-family: Playfair Display;
+   
   }
   
   .survey-description {
     font-size: 16px;
     color: #000;
-    margin-top: 10px;
-    font-family: Playfair Display;
+    
     font-style: italic;
   }
   .survey-title_sub{
     font-size: 20px;
     color: #000;
-    margin-top: 10px;
-    font-family: Playfair Display;
-    font-style: italic;
+ 
     text-decoration: underline;
   }
 
@@ -207,22 +215,20 @@ button:hover {
     font-weight: bold;
     color: #11542b;
     margin-top: 30px;
-    font-family: Playfair Display;
+ 
   }
 
   .question-text {
     font-size: 18px;
     color: #000;
-    margin-top: 10px;
-    font-family: Playfair Display;
+   
     font-style: bold;
   }
   
   .form-check-label {
     font-size: 18px;
     color: #000;
-    margin-top: 10px;
-    font-family: Playfair Display;
+  
   }
 
 /* Hiệu ứng khi chuyển câu hỏi */
