@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 // import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -31,7 +30,7 @@ const LeftPanel = styled.div`
     max-width: 250px;
     height: auto;
     object-fit: contain;
-    margin-bottom: 20px; 
+    margin-bottom: 20px;
   }
 
   h1 {
@@ -140,14 +139,14 @@ function Login() {
     try {
       const response = await http.post("/auth/login", { email, password });
       const userData = response.data;
-    
+
       if (userData) {
         localStorage.setItem("user_login", JSON.stringify(userData));
         setError("");
-    
+
         // Kiểm tra nếu người dùng là admin
         if (userData.isAdmin) {
-          navigate("/Admin-Dashboard"); // Điều hướng đến trang Dashboard nếu là admin
+          navigate("/AdminDashboard"); // Điều hướng đến trang Dashboard nếu là admin
         } else {
           navigate("/"); // Điều hướng đến trang chủ nếu không phải admin
         }
@@ -166,7 +165,7 @@ function Login() {
     <PageContainer>
       <LeftPanel>
         <h1>Welcome to EduCare</h1>
-        <p>  </p>
+        <p> </p>
         <img src={LogoEduCare} alt="Edu Care Logo" />
         <div className="partners">
           <img src={SlackLogo} alt="Slack" />

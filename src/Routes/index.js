@@ -7,9 +7,10 @@ import ResultSurvey from "../Pages/ResultSurvey/ResultSurvey";
 import Login from "../Components/Login/Login";
 import DashboardPage from "../Components/Admin/DashboardPage";
 import SurveyManagementPage from "../Components/Admin/SurveyManagementPage";
-import UserManagementPage  from "../Components/Admin/UserManagementPage";
+import UserManagementPage from "../Components/Admin/UserManagementPage";
 import Layout from "../Components/Admin/Layout";
 import EntertainmentPage from "../Pages/EntertainmentPage/EntertainmentPage";
+import EntertainmentManagement from "../Components/Admin/EntertainmentManagement";
 
 export const routes = [
   {
@@ -46,8 +47,13 @@ export const routes = [
     isShowHeader: true,
   },
   {
-    path: "/Admin-Dashboard",
+    path: "/AdminDashboard",
     page: DashboardPage,
+    isShowHeader: true,
+  },
+  {
+    path: "/EntertainmentManagement",
+    page: EntertainmentManagement,
     isShowHeader: true,
   },
   {

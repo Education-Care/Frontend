@@ -161,6 +161,14 @@ function HeaderComponent() {
                   <MenuItem onClick={handleClose}>
                     <Link
                       className="w-full text-gray-600"
+                      to={"/AdminDashboard"}
+                    >
+                      Dashboard
+                    </Link>
+                  </MenuItem>
+                  <MenuItem onClick={handleClose}>
+                    <Link
+                      className="w-full text-gray-600"
                       to={"/SurveyManagement"}
                     >
                       Survey Question Management
@@ -169,17 +177,17 @@ function HeaderComponent() {
                   <MenuItem onClick={handleClose}>
                     <Link
                       className="w-full text-gray-600"
-                      to={"/UserManagementPage"}
+                      to={"/EntertainmentManagement"}
                     >
-                      User Management
+                      Entertainment Management
                     </Link>
                   </MenuItem>
                   <MenuItem onClick={handleClose}>
                     <Link
                       className="w-full text-gray-600"
-                      to={"/Admin-Dashboard"}
+                      to={"/UserManagementPage"}
                     >
-                      Dashboard
+                      User Management
                     </Link>
                   </MenuItem>
                 </div>
