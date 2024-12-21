@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom"; // Thêm useLocation
+import { useLocation } from "react-router-dom";
 import { getSuggestionByDepressionLevel } from "../../services/suggestions";
 import { toast } from "react-toastify";
+import { getEntertainmentItem } from "../../services/entertainment/management";
+import GridItems from "../../Components/EntertainmentComponent/GridItems";
+import CurrentlyPlaying from "../../Components/EntertainmentComponent/CurrentlyPlaying";
 
 export const cardList = [
   {
@@ -35,7 +38,7 @@ const DepressionLevel = {
   VerySevereDepression: "very_severe_depression",
 };
 
-function evaluateAnxiety(depressionLevel: string): string {
+function evaluateAnxiety(depressionLevel) {
   switch (depressionLevel) {
     case DepressionLevel.NoDepression:
       return "Đánh giá lo âu: Bạn không có dấu hiệu lo âu.";
@@ -52,14 +55,32 @@ function evaluateAnxiety(depressionLevel: string): string {
   }
 }
 
-const ReseultServey = () => {
+const ResultSurvey = () => {
   const location = useLocation(); // Lấy thông tin location từ useLocation
   const [suggestions, setSuggestions] = useState();
   const [depressionLevel, setDepressionLevel] = useState();
-  
+  const [recommendations, setRecommendations] = useState([]);
+  const [playingItem, setPlayingItem] = useState(null);
+
   // Lấy totalScore từ state khi navigate
-  const { totalScore, depressionLevel: levelFromState } = location.state
-  console.log("levelFromState", levelFromState)
+  const { totalScore, depressionLevel: levelFromState } = location.state;
+
+  useEffect(() => {
+    const fetchEntertainmentByDepressionLevel = async () => {
+      try {
+        const response = await getEntertainmentItem({
+          isUser: true,
+        });
+        setRecommendations(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    if (depressionLevel) {
+      fetchEntertainmentByDepressionLevel();
+    }
+  }, [depressionLevel]);
+
   useEffect(() => {
     if (levelFromState) {
       setDepressionLevel(levelFromState);
@@ -70,7 +91,7 @@ const ReseultServey = () => {
   const fetchSuggestionByDepressionLevel = async () => {
     try {
       const response = await getSuggestionByDepressionLevel(levelFromState);
-      console.log("responseNha", response)
+      console.log("responseNha", response);
       setSuggestions(response.suggestion);
     } catch (err) {
       toast.error("Lỗi khi lấy suggestion", {
@@ -98,12 +119,20 @@ const ReseultServey = () => {
         </div>
         <hr className="text-gray-600 my-4 " />
       </div>
+
       {/* section kham pha ngay */}
       <div className="relative container mx-auto mb-8">
         <p className="w-full text-sm text-center mb-8 px-20">{suggestions}</p>
         <p className="flex text-center max-w-[37.5rem] mx-auto justify-center uppercase text-2xl mb-8 font-bold text-blue-900">
           Khám phá ngay
         </p>
+      </div>
+      {/* Section recommend entertainment */}
+      <div className="relative container mx-auto mb-8">
+        <p className="w-full text-sm text-center mb-8 px-20">
+          Dựa trên kết quả của bạn, hãy thử lắng nghe những gì chúng tôi đề xuất
+        </p>
+        <GridItems onPlay={setPlayingItem} items={recommendations} />
       </div>
       {/* section list card */}
       <div className="container mx-auto">
@@ -132,8 +161,13 @@ const ReseultServey = () => {
           ))}
         </ul>
       </div>
+
+      <CurrentlyPlaying
+        playingItem={playingItem}
+        onClose={() => setPlayingItem(null)}
+      />
     </div>
   );
 };
 
-export default ReseultServey;
+export default ResultSurvey;

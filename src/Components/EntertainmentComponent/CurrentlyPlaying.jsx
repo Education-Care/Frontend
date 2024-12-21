@@ -3,7 +3,7 @@ import React from "react";
 import { Button, Card, CardContent } from "@mui/material";
 import { Close } from "@mui/icons-material";
 
-export function CurrentlyPlaying({ playingItem, onClose }) {
+export default function CurrentlyPlaying({ playingItem, onClose }) {
   if (!playingItem) return null;
 
   return (

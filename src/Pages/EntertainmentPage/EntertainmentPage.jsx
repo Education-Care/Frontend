@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CurrentlyPlaying } from "../../Components/EntertainmentComponent/CurrentlyPlaying";
+import CurrentlyPlaying from "../../Components/EntertainmentComponent/CurrentlyPlaying";
 import GridItems from "../../Components/EntertainmentComponent/GridItems";
 import { Search } from "../../Components/EntertainmentComponent/Search";
 import { getEntertainmentItem } from "../../services/entertainment/management";
@@ -11,6 +11,12 @@ export default function EntertainmentPage() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [playingItem, setPlayingItem] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // all music and podcast
+  const [allMusic, setAllMusic] = useState([]);
+  const [allPodcast, setAllPodcast] = useState([]);
+
+  // recommend music and podcast
   const [musicResults, setMusicResults] = useState([]);
   const [podcastResults, setPodcastResults] = useState([]);
   const [limit, setLimit] = useState(10);
@@ -19,11 +25,18 @@ export default function EntertainmentPage() {
   useEffect(() => {
     const fetchMusics = async () => {
       try {
+        const musicRecommend = await getEntertainmentItem({
+          type: "music",
+          searchTerm: searchQuery,
+          isUser: true,
+        });
+        setMusicResults(musicRecommend.data);
+
         const music = await getEntertainmentItem({
           type: "music",
           searchTerm: searchQuery,
         });
-        setMusicResults(music.data);
+        setAllMusic(music.data);
       } catch (err) {
         console.error("Error fetching tracks with images:", err);
       }
@@ -39,8 +52,16 @@ export default function EntertainmentPage() {
         const podcasts = await getEntertainmentItem({
           type: "podcast",
           searchTerm: searchQuery,
+          isUser: true,
         });
         setPodcastResults(podcasts.data);
+
+        const allPodcast = await getEntertainmentItem({
+          type: "podcast",
+          searchTerm: searchQuery,
+        });
+
+        setAllPodcast(allPodcast.data);
       } catch (err) {
         console.error("Error fetching podcasts:", err);
       }
@@ -122,7 +143,7 @@ export default function EntertainmentPage() {
         <Search onSearch={setSearchQuery} />
         <hr className="w-full h-px text-gray-500" />
         {(activeCategory === "all" || activeCategory === "podcasts") && (
-          <section style={{ marginBottom: "32px" }}>
+          <section className="my-8">
             <h2
               style={{
                 fontSize: "2rem",
@@ -131,14 +152,15 @@ export default function EntertainmentPage() {
                 color: "#2baadf",
               }}
             >
-              Recommment Podcasts
+              Recommend Podcasts
             </h2>
             <GridItems onPlay={setPlayingItem} items={podcastResults} />
           </section>
         )}
+        <hr className="w-full h-px text-gray-500" />
 
         {(activeCategory === "all" || activeCategory === "music") && (
-          <section>
+          <section className="my-8">
             <h2
               style={{
                 fontSize: "2rem",
@@ -147,12 +169,69 @@ export default function EntertainmentPage() {
                 color: "#2baadf",
               }}
             >
-              Recommment Music
+              Recommend Music
             </h2>
             <GridItems onPlay={setPlayingItem} items={musicResults} />
 
             {/* Nút Show More */}
             {musicResults.length > limit && (
+              <div style={{ textAlign: "center", marginTop: "16px" }}>
+                <Button
+                  variant="outlined"
+                  style={{ color: "#2baadf", borderColor: "#2baadf" }}
+                  onClick={() => setLimit((prev) => prev + 10)} // Tăng số bài nhạc hiển thị
+                >
+                  Show More
+                </Button>
+              </div>
+            )}
+          </section>
+        )}
+        <hr className="w-full h-px text-gray-500" />
+        {(activeCategory === "all" || activeCategory === "podcasts") && (
+          <section className="my-8">
+            <h2
+              style={{
+                fontSize: "2rem",
+                fontWeight: "600",
+                marginBottom: "16px",
+                color: "#2baadf",
+              }}
+            >
+              Podcasts
+            </h2>
+            <GridItems onPlay={setPlayingItem} items={allPodcast} />
+
+            {allPodcast.length > limit && (
+              <div style={{ textAlign: "center", marginTop: "16px" }}>
+                <Button
+                  variant="outlined"
+                  style={{ color: "#2baadf", borderColor: "#2baadf" }}
+                  onClick={() => setLimit((prev) => prev + 10)} // Tăng số bài nhạc hiển thị
+                >
+                  Show More
+                </Button>
+              </div>
+            )}
+          </section>
+        )}
+
+        <hr className="w-full h-px text-gray-500" />
+        {(activeCategory === "all" || activeCategory === "music") && (
+          <section className="my-8">
+            <h2
+              style={{
+                fontSize: "2rem",
+                fontWeight: "600",
+                marginBottom: "16px",
+                color: "#2baadf",
+              }}
+            >
+              Musics
+            </h2>
+            <GridItems onPlay={setPlayingItem} items={allMusic} />
+
+            {allMusic.length > limit && (
               <div style={{ textAlign: "center", marginTop: "16px" }}>
                 <Button
                   variant="outlined"

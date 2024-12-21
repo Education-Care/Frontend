@@ -6,9 +6,22 @@ export const getEntertainmentItem = async ({
   searchTerm = "",
   currentPage = 1,
   type = "",
+  isUser = false,
 } = {}) => {
+  // get current user
+  const currentUser = JSON.parse(localStorage.getItem("user_login"));
+  let depressionLevel = "";
+  if (isUser && !currentUser.isAdmin) {
+    depressionLevel = await http.get(
+      `surveys/user/${currentUser.userId}/last`,
+      {
+        signal: controller.signal,
+      }
+    );
+  }
+
   return http.get(
-    `/entertainment?s=${searchTerm}&page=${currentPage}&type=${type}`,
+    `/entertainment?s=${searchTerm}&page=${currentPage}&type=${type}&depressionLevel=${depressionLevel}`,
     {
       signal: controller.signal,
     }
