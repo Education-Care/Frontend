@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { PodcastGrid } from "../../Components/EntertainmentComponent/PodcastGrid";
-import { MusicGrid } from "../../Components/EntertainmentComponent/MusicGrid";
 import { Button } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { CurrentlyPlaying } from "../../Components/EntertainmentComponent/CurrentlyPlaying";
+import GridItems from "../../Components/EntertainmentComponent/GridItems";
 import { Search } from "../../Components/EntertainmentComponent/Search";
-import { getAlbum, getTrack, getPodcast } from "../../services/entertainment/spotify";
-import { useNavigate } from "react-router-dom"; 
-
-
+import { getEntertainmentItem } from "../../services/entertainment/management";
 
 export default function EntertainmentPage() {
   const navigate = useNavigate();
@@ -16,54 +13,41 @@ export default function EntertainmentPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [musicResults, setMusicResults] = useState([]);
   const [podcastResults, setPodcastResults] = useState([]);
-  const [limit, setLimit] = useState(10); // Hiển thị tối đa 10 bài nhạc
+  const [limit, setLimit] = useState(10);
 
+  // Music
   useEffect(() => {
-    const fetchMusicWithImages = async () => {
+    const fetchMusics = async () => {
       try {
-        const albumData = await getAlbum("3wS2gclZM6OODokFof3cvv");
-        const tracks = albumData.tracks.items;
-
-        // Lọc và chỉ gọi API cho những bài nhạc thiếu ảnh
-        const enhancedTracks = await Promise.all(
-          tracks.map(async (track) => {
-            if (!track.album?.images?.length) {
-              const trackDetails = await getTrack(track.id); // Gọi API để lấy ảnh
-              return {
-                ...track,
-                album: trackDetails.album, // Bổ sung album vào bài nhạc
-              };
-            }
-            return track; // Nếu đã có ảnh, trả về bài nhạc gốc
-          })
-        );
-
-        setMusicResults(enhancedTracks);
+        const music = await getEntertainmentItem({
+          type: "music",
+          searchTerm: searchQuery,
+        });
+        setMusicResults(music.data);
       } catch (err) {
         console.error("Error fetching tracks with images:", err);
       }
     };
 
-    fetchMusicWithImages();
+    fetchMusics();
   }, [searchQuery]);
-//PodcastPodcast
+
+  // Podcast
   useEffect(() => {
     const fetchPodcasts = async () => {
       try {
-        const podcastData = await getPodcast("5AvwZVawapvyhJUIx71pdJ"); // ID của podcast
-        const episodes = podcastData.episodes.items;
-  
-        setPodcastResults(episodes.slice(0, 5)); // Lấy 5 tập podcast đầu tiên
+        const podcasts = await getEntertainmentItem({
+          type: "podcast",
+          searchTerm: searchQuery,
+        });
+        setPodcastResults(podcasts.data);
       } catch (err) {
         console.error("Error fetching podcasts:", err);
       }
     };
-  
-    fetchPodcasts();
-  }, []);
 
-  // Lấy danh sách nhạc giới hạn
-  const displayedMusicResults = musicResults.slice(0, limit);
+    fetchPodcasts();
+  }, [searchQuery]);
 
   return (
     <div
@@ -128,14 +112,15 @@ export default function EntertainmentPage() {
           style={{
             fontSize: "2.5rem",
             fontWeight: "bold",
-            marginBottom: "32px",
             color: "#2baadf",
           }}
+          className="mb-4"
         >
           Entertainment Hub
         </h1>
 
         <Search onSearch={setSearchQuery} />
+        <hr className="w-full h-px text-gray-500" />
         {(activeCategory === "all" || activeCategory === "podcasts") && (
           <section style={{ marginBottom: "32px" }}>
             <h2
@@ -148,7 +133,7 @@ export default function EntertainmentPage() {
             >
               Recommment Podcasts
             </h2>
-            <PodcastGrid onPlay={setPlayingItem} podcasts={podcastResults} />
+            <GridItems onPlay={setPlayingItem} items={podcastResults} />
           </section>
         )}
 
@@ -164,7 +149,7 @@ export default function EntertainmentPage() {
             >
               Recommment Music
             </h2>
-            <MusicGrid onPlay={setPlayingItem} music={displayedMusicResults} />
+            <GridItems onPlay={setPlayingItem} items={musicResults} />
 
             {/* Nút Show More */}
             {musicResults.length > limit && (

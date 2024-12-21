@@ -5,7 +5,6 @@ import { Close } from "@mui/icons-material";
 
 export function CurrentlyPlaying({ playingItem, onClose }) {
   if (!playingItem) return null;
-  const isPodcast = playingItem.type === "podcast";
 
   return (
     <Card
@@ -31,16 +30,15 @@ export function CurrentlyPlaying({ playingItem, onClose }) {
           }}
         >
           <div style={{ flex: 1 }}>
-            {/* Spotify Embed */}
-            <iframe
-              src={`https://open.spotify.com/embed/${
-                isPodcast ? "episode" : "track"
-              }/${playingItem.id}`}
-              width="100%"
-              height="80"
-              allow="encrypted-media"
-              className="rounded-md"
-            ></iframe>
+            <audio
+              controls
+              autoPlay
+              style={{ width: "100%", borderRadius: "8px" }}
+              src={playingItem.link}
+            >
+              Your browser does not support the
+              <code>audio</code> element.
+            </audio>
           </div>
           <div style={{ marginLeft: "16px" }}>
             <Button

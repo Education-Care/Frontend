@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Logo from "../../Assets/homepage.png";
 import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
-import "../../Styles/Navbar.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Logo from "../../Assets/homepage.png";
+import "../../Styles/Navbar.css";
 
 import { Avatar, Divider } from "@mui/material";
 import Menu from "@mui/material/Menu";
@@ -16,7 +16,7 @@ function HeaderComponent() {
   const [nav, setNav] = useState(false);
   const [userLogin, setUserLogin] = useState(null);
 
-  const navigate = useNavigate(); // Hook để chuyển hướng trang
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -71,7 +71,7 @@ function HeaderComponent() {
   };
 
   return (
-    <div className="navbar-section">
+    <div className="navbar-section fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-8 py-4 bg-white shadow-md">
       <h1 className="navbar-title">
         <Link to="/">
           <img src={Logo} alt="Edu Care" className="navbar-logo" />
@@ -81,7 +81,7 @@ function HeaderComponent() {
       {/* Desktop */}
       <ul className="navbar-items">
         {/* Only show the menu if the user is not an admin */}
-        {!userLogin?.isAdmin && (
+        {!userLogin?.isAdmin ? (
           <>
             <li>
               <Link to="/" className="navbar-links">
@@ -89,14 +89,37 @@ function HeaderComponent() {
               </Link>
             </li>
             <li>
-              <a href="/EduCare/survey" className="navbar-links">
+              <Link to="/survey" className="navbar-links">
                 Assessments
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/EduCare/Entertainment" className="navbar-links">
+              <Link to="/entertainment" className="navbar-links">
                 Entertainment
-              </a>
+              </Link>
+            </li>
+          </>
+        ) : (
+          <>
+            <li>
+              <Link to="/AdminDashboard" className="navbar-links">
+                Dashboard
+              </Link>
+            </li>
+            <li>
+              <Link to="/SurveyManagement" className="navbar-links">
+                Survey Management
+              </Link>
+            </li>
+            <li>
+              <Link to="/EntertainmentManagement" className="navbar-links">
+                Entertainment Management
+              </Link>
+            </li>
+            <li>
+              <Link to="/UserManagementPage" className="navbar-links">
+                User Management
+              </Link>
             </li>
           </>
         )}
@@ -105,135 +128,117 @@ function HeaderComponent() {
       {/* Live Chat Button */}
       <div className="flex gap-4 items-center">
         <div className="flex items-center gap-8 text-white">
-          <span
-            className="flex items-center gap-2 border px-2 py-1 rounded-full cursor-pointer bg-white"
-            aria-controls={open ? "account-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
-            onClick={handleClick}
-          >
-            <MenuIcon sx={{ color: "#1A8EFD" }} />
-            <Avatar
-              alt={userLogin?.fullName}
-              sx={
-                true
-                  ? { width: 30, height: 30, bgcolor: "#1A8EFD" }
-                  : { width: 30, height: 30 }
-              }
-              src={userLogin?.avatarUrl || ""}
-            />
-          </span>
-          {userLogin && (
-            <Menu
-              className="rouned-lg"
-              id="account-menu"
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              PaperProps={{
-                sx: {
-                  borderRadius: 3,
-                  mt: 1,
-                },
-              }}
-              transformOrigin={{ horizontal: "right", vertical: "top" }}
-              anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-            >
-              {/* User-specific menu items */}
-              {!userLogin?.isAdmin && (
-                <>
-                  <MenuItem onClick={handleClose}>
-                    <Link className="w-full text-gray-600" to={"/profile"}>
-                      Personal Information
-                    </Link>
-                  </MenuItem>
-                  <MenuItem onClick={handleClose}>
-                    <Link className="w-full text-gray-600" to={"/"}>
-                      Schedule Appointment
-                    </Link>
-                  </MenuItem>
-                </>
-              )}
+          {userLogin ? (
+            <>
+              <span
+                className="flex items-center gap-2 border px-2 py-1 rounded-full cursor-pointer bg-white"
+                aria-controls={open ? "account-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? "true" : undefined}
+                onClick={handleClick}
+              >
+                <MenuIcon sx={{ color: "#1A8EFD" }} />
+                <Avatar
+                  alt={userLogin?.fullName}
+                  sx={
+                    true
+                      ? { width: 30, height: 30, bgcolor: "#1A8EFD" }
+                      : { width: 30, height: 30 }
+                  }
+                  src={userLogin?.avatarUrl || ""}
+                />
+              </span>
+              <Menu
+                className="rouned-lg"
+                id="account-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                PaperProps={{
+                  sx: {
+                    borderRadius: 3,
+                    mt: 1,
+                  },
+                }}
+                transformOrigin={{ horizontal: "right", vertical: "top" }}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+              >
+                {/* User-specific menu items */}
+                {!userLogin?.isAdmin && (
+                  <>
+                    <MenuItem onClick={handleClose}>
+                      <Link className="w-full text-gray-600" to={"/profile"}>
+                        Personal Information
+                      </Link>
+                    </MenuItem>
+                    <MenuItem onClick={handleClose}>
+                      <Link className="w-full text-gray-600" to={"/"}>
+                        Schedule Appointment
+                      </Link>
+                    </MenuItem>
+                  </>
+                )}
 
-              {/* Admin-specific menu items */}
-              {userLogin?.isAdmin && (
-                <div>
-                  <MenuItem onClick={handleClose}>
-                    <Link
-                      className="w-full text-gray-600"
-                      to={"/AdminDashboard"}
-                    >
-                      Dashboard
-                    </Link>
-                  </MenuItem>
-                  <MenuItem onClick={handleClose}>
-                    <Link
-                      className="w-full text-gray-600"
-                      to={"/SurveyManagement"}
-                    >
-                      Survey Question Management
-                    </Link>
-                  </MenuItem>
-                  <MenuItem onClick={handleClose}>
-                    <Link
-                      className="w-full text-gray-600"
-                      to={"/EntertainmentManagement"}
-                    >
-                      Entertainment Management
-                    </Link>
-                  </MenuItem>
-                  <MenuItem onClick={handleClose}>
-                    <Link
-                      className="w-full text-gray-600"
-                      to={"/UserManagementPage"}
-                    >
-                      User Management
-                    </Link>
-                  </MenuItem>
-                </div>
-              )}
+                {/* Admin-specific menu items */}
+                {userLogin?.isAdmin && (
+                  <div>
+                    <MenuItem onClick={handleClose}>
+                      <Link
+                        className="w-full text-gray-600"
+                        to={"/AdminDashboard"}
+                      >
+                        Dashboard
+                      </Link>
+                    </MenuItem>
+                    <MenuItem onClick={handleClose}>
+                      <Link
+                        className="w-full text-gray-600"
+                        to={"/SurveyManagement"}
+                      >
+                        Survey Question Management
+                      </Link>
+                    </MenuItem>
+                    <MenuItem onClick={handleClose}>
+                      <Link
+                        className="w-full text-gray-600"
+                        to={"/EntertainmentManagement"}
+                      >
+                        Entertainment Management
+                      </Link>
+                    </MenuItem>
+                    <MenuItem onClick={handleClose}>
+                      <Link
+                        className="w-full text-gray-600"
+                        to={"/UserManagementPage"}
+                      >
+                        User Management
+                      </Link>
+                    </MenuItem>
+                  </div>
+                )}
 
-              <Divider />
-              <MenuItem onClick={handleClose}>
-                <Link className="w-full text-gray-600" to="/help">
-                  Help Center
-                </Link>
-              </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <p className="w-full text-red-600" onClick={handleLogout}>
-                  Log Out
-                </p>
-              </MenuItem>
-            </Menu>
-          )}
-          {!userLogin && (
-            <Menu
-              className="rouned-lg"
-              id="account-menu"
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              PaperProps={{
-                sx: {
-                  borderRadius: 3,
-                  mt: 1,
-                },
-              }}
-              transformOrigin={{ horizontal: "right", vertical: "top" }}
-              anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-            >
-              <MenuItem onClick={handleClose}>
-                <Link className="w-full text-gray-600" to={"/login"}>
-                  Log In
-                </Link>
-              </MenuItem>
-              <Divider light />
-              <MenuItem onClick={handleClose}>
-                <Link className="w-full text-gray-600" to="/help">
-                  Help Center
-                </Link>
-              </MenuItem>
-            </Menu>
+                <Divider />
+                <MenuItem onClick={handleClose}>
+                  <Link className="w-full text-gray-600" to="/help">
+                    Help Center
+                  </Link>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                  <p className="w-full text-red-600" onClick={handleLogout}>
+                    Log Out
+                  </p>
+                </MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <div>
+              <button
+                onClick={() => navigate("/login")}
+                className="bg-blue-500 text-white px-4 py-2 rounded-full"
+              >
+                Login
+              </button>
+            </div>
           )}
         </div>
       </div>

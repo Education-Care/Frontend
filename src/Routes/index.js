@@ -67,7 +67,7 @@ export const routes = [
     isShowHeader: true,
   },
   {
-    path: "/Entertainment", // Add the entertainment route
+    path: "/entertainment", // Add the entertainment route
     page: EntertainmentPage,
     isShowHeader: true,
   },

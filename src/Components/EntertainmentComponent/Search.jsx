@@ -1,18 +1,26 @@
-import React from 'react';
-import { TextField } from '@mui/material';
-import { Search as SearchIcon } from '@mui/icons-material';
+import React, { useState } from "react";
+import { TextField, Box, IconButton } from "@mui/material";
+import { Search as SearchIcon } from "@mui/icons-material";
 
 export function Search({ onSearch }) {
+  const [searchValue, setSearchValue] = useState("");
   return (
-    <div style={{ position: 'relative' }}>
-      <SearchIcon style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
+    <Box sx={{ display: "flex", mb: 2 }}>
       <TextField
-        type="search"
-        placeholder="Search podcasts and music..."
+        fullWidth
         variant="outlined"
-        style={{ paddingLeft: '40px', width: '100%', backgroundColor: 'white', borderColor: '#2baadf' }}
-        onChange={(e) => onSearch(e.target.value)}
+        placeholder="Search podcasts, music, etc."
+        value={searchValue}
+        onChange={(e) => setSearchValue(e.target.value)}
+        InputProps={{
+          endAdornment: (
+            <IconButton onClick={() => onSearch(searchValue)}>
+              <SearchIcon />
+            </IconButton>
+          ),
+        }}
+        sx={{ mr: 2 }}
       />
-    </div>
+    </Box>
   );
 }

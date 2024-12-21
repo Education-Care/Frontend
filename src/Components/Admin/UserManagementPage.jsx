@@ -119,7 +119,7 @@ export default function UserManagementPage() {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }} className="pt-4">
       <Typography variant="h4" component="h1" gutterBottom>
         User Management
       </Typography>
@@ -145,9 +145,13 @@ export default function UserManagementPage() {
           </TableHead>
           <TableBody>
             {filteredUsers.map((user) => (
-              <TableRow 
+              <TableRow
                 key={user.id}
-                sx={{ backgroundColor: isUserHighlighted(user) ? '#ffcccb' : 'inherit' }}
+                sx={{
+                  backgroundColor: isUserHighlighted(user)
+                    ? "#ffcccb"
+                    : "inherit",
+                }}
               >
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.birthday}</TableCell>
@@ -155,7 +159,10 @@ export default function UserManagementPage() {
                 <TableCell>{user.phoneNumber}</TableCell>
                 <TableCell>{user.hobby}</TableCell>
                 <TableCell>
-                  <Button variant="contained" onClick={() => handleDetailClick(user)}>
+                  <Button
+                    variant="contained"
+                    onClick={() => handleDetailClick(user)}
+                  >
                     Detail
                   </Button>
                 </TableCell>
@@ -165,20 +172,29 @@ export default function UserManagementPage() {
         </Table>
       </TableContainer>
 
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>{selectedUser?.name}'s Surveys</DialogTitle>
         <DialogContent>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
+            <div style={{ display: "flex", gap: "16px", marginBottom: "16px" }}>
               <DatePicker
                 label="From"
                 value={surveyDateRange[0]}
-                onChange={(newValue) => setSurveyDateRange([newValue, surveyDateRange[1]])}
+                onChange={(newValue) =>
+                  setSurveyDateRange([newValue, surveyDateRange[1]])
+                }
               />
               <DatePicker
                 label="To"
                 value={surveyDateRange[1]}
-                onChange={(newValue) => setSurveyDateRange([surveyDateRange[0], newValue])}
+                onChange={(newValue) =>
+                  setSurveyDateRange([surveyDateRange[0], newValue])
+                }
               />
             </div>
           </LocalizationProvider>
@@ -193,10 +209,15 @@ export default function UserManagementPage() {
               </TableHead>
               <TableBody>
                 {filteredSurveys.map((survey) => (
-                  <TableRow 
+                  <TableRow
                     key={survey.id}
-                    sx={{ backgroundColor: survey.depressionLevel === "very_severe_depression" && 
-                      dayjs().diff(dayjs(survey.date), 'week') < 1  ? '#ffcccb' : 'inherit' }}
+                    sx={{
+                      backgroundColor:
+                        survey.depressionLevel === "very_severe_depression" &&
+                        dayjs().diff(dayjs(survey.date), "week") < 1
+                          ? "#ffcccb"
+                          : "inherit",
+                    }}
                   >
                     <TableCell>{survey.date}</TableCell>
                     <TableCell>{survey.depressionLevel}</TableCell>

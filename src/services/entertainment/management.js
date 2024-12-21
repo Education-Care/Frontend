@@ -2,10 +2,17 @@ import http from "../../lib/http";
 
 const controller = new AbortController();
 
-export const getEntertainmentItem = async ({ searchTerm, currentPage }) => {
-  return http.get(`/entertainment?s=${searchTerm}&page=${currentPage}`, {
-    signal: controller.signal,
-  });
+export const getEntertainmentItem = async ({
+  searchTerm = "",
+  currentPage = 1,
+  type = "",
+} = {}) => {
+  return http.get(
+    `/entertainment?s=${searchTerm}&page=${currentPage}&type=${type}`,
+    {
+      signal: controller.signal,
+    }
+  );
 };
 
 export const getEntertainmentItemById = async (id) => {
