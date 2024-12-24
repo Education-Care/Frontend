@@ -146,7 +146,7 @@ export const Survey = (props) => {
         <div className="button-container">
           {isFinalPage ? (
             <button
-              className="btn btn-primary save-btn"
+              className="btn btn-primary save-btn mt-5"
               name="save_btn"
               type="submit"
             >
