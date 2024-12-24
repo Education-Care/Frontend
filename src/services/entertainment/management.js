@@ -11,7 +11,8 @@ export const getEntertainmentItem = async ({
   // get current user
   const currentUser = JSON.parse(localStorage.getItem("user_login"));
   let depressionLevel = "";
-  if (isUser && !currentUser.isAdmin) {
+
+  if (isUser && currentUser && !currentUser.isAdmin) {
     depressionLevel = await http.get(
       `surveys/user/${currentUser.userId}/last`,
       {
