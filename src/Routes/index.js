@@ -11,6 +11,7 @@ import UserManagementPage from "../Components/Admin/UserManagementPage";
 import Layout from "../Components/Admin/Layout";
 import EntertainmentPage from "../Pages/EntertainmentPage/EntertainmentPage";
 import EntertainmentManagement from "../Components/Admin/EntertainmentManagement";
+import MentalHealthBlog from "../Pages/BlogPage/BlogPage";
 
 export const routes = [
   {
@@ -67,8 +68,13 @@ export const routes = [
     isShowHeader: true,
   },
   {
-    path: "/entertainment", // Add the entertainment route
+    path: "/entertainment",
     page: EntertainmentPage,
+    isShowHeader: true,
+  },
+  {
+    path: "/blog",
+    page: MentalHealthBlog,
     isShowHeader: true,
   },
   {

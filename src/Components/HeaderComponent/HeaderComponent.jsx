@@ -98,6 +98,11 @@ function HeaderComponent() {
                 Entertainment
               </Link>
             </li>
+            <li>
+              <Link to="/blog" className="navbar-links">
+                Blog
+              </Link>
+            </li>
           </>
         ) : (
           <>
