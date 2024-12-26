@@ -17,6 +17,7 @@ const TotalUsers = () => {
     const fetchUsers = async () => {
       try {
         const data = await getUser();
+        console.log("datauser", data)
         setUsers(data);
       } catch (error) {
         console.error(error);
@@ -33,7 +34,7 @@ const TotalUsers = () => {
           Total Users
         </Typography>
         <Typography component="p" variant="h4">
-          {users.length}
+          {users.total}
         </Typography>
       </StyledPaper>
     </Grid>
