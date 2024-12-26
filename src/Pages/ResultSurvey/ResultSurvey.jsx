@@ -61,12 +61,13 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
-  height: '100%', 
+  height: '100%',
   '&:hover': {
     transform: 'translateY(-5px)',
     boxShadow: theme.shadows[4],
   },
 }));
+
 const ReseultServey = () => {
   const location = useLocation(); // Lấy thông tin location từ useLocation
   const [suggestions, setSuggestions] = useState();
