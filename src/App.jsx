@@ -9,7 +9,7 @@ import Chatbot from "./Components/Chatbot/Chatbot.jsx";
 function App() {
   return (
     <div className="bg-gray-100">
-      <Router basename="/EduCare">
+      <Router>
         <Routes>
           {routes.map((route) => {
             const Page = route.page;
