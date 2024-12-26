@@ -97,7 +97,7 @@ export default function MentalHealthBlog() {
 
   return (
     <GreenThemeContainer maxWidth="lg">
-      <Title variant="h2" align="center">
+      <Title variant="h2" align="center" style={{ color: "#004aad" }}>
         Mental Health & Depression Information
       </Title>
 
@@ -117,6 +117,7 @@ export default function MentalHealthBlog() {
         <StyledButton
           variant="contained"
           startIcon={<SearchIcon />}
+          style={{ background: "#004aad" , borderRadius:'12px'}}
           onClick={handleSearch}
         >
           Search
@@ -127,8 +128,9 @@ export default function MentalHealthBlog() {
           startIcon={<RefreshIcon />}
           onClick={() => fetchPosts()}
           sx={{
-            borderColor: '#4caf50',
-            color: '#4caf50',
+            borderColor: '#004aad',
+            borderRadius: '12px',
+            color: '#004aad',
             fontWeight: 'bold',
             '&:hover': {
               borderColor: '#388e3c',
