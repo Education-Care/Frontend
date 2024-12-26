@@ -2,9 +2,11 @@ import http from "../../lib/http";
 
 const controller = new AbortController();
 
-export const getAllInfoUserAsync = () => {
-  return http.get(`/users`, { signal: controller.signal });
+export const getAllInfoUserAsync = (page, limit) => {
+  const controller = new AbortController(); // Ensure controller is properly defined
+  return http.get(`/users?page=${page}&limit=${limit}`, { signal: controller.signal });
 };
+
 export const getInfoUserAsync = (id) => {
   return http.get(`/users/${id}`, { signal: controller.signal });
 };

@@ -336,16 +336,16 @@ export default function EntertainmentManagement() {
                   label="Depression Level"
                   required
                 >
-                  <MenuItem value="no_depression">No Depression</MenuItem>
+                  <MenuItem value="minimal_depression">Minimal Depression</MenuItem>
                   <MenuItem value="mild_depression">Mild Depression</MenuItem>
                   <MenuItem value="moderate_depression">
                     Moderate Depression
                   </MenuItem>
-                  <MenuItem value="severe_depression">
-                    Severe Depression
+                  <MenuItem value="moderately_severe_depression">
+                    Moderately Severe Depression
                   </MenuItem>
-                  <MenuItem value="very_severe_depression">
-                    Very Severe Depression
+                  <MenuItem value="severe_depression">
+                   Severe Depression
                   </MenuItem>
                 </Select>
               </FormControl>
