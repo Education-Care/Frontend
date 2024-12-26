@@ -119,11 +119,11 @@ export const Survey = (props) => {
           </h2>
         </div>
         <p className="survey-description">
-          Bảng câu hỏi sức khỏe bệnh nhân (PHQ-9)
+          Patient Health Questionnaire (PHQ-9)
         </p>
-        <h3 className="survey-title_sub">Trong 2 tuần qua</h3>
+        <h3 className="survey-title_sub">During the past 2 weeks</h3>
         <p className="survey-description">
-          Bạn có thường xuyên cảm thấy khó chịu do những vấn đề sau đây không?
+          How often have they been bothered by the following over the past 2 weeks?
         </p>
       </div>
       <form className="survey-form" onSubmit={handleSubmit}>

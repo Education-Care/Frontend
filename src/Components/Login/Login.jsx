@@ -139,11 +139,11 @@ function Login() {
     try {
       const response = await http.post("/auth/login", { email, password });
       const userData = response.data;
-
+      
       if (userData) {
         localStorage.setItem("user_login", JSON.stringify(userData));
         setError("");
-
+        
         // Kiểm tra nếu người dùng là admin
         if (userData.isAdmin) {
           navigate("/AdminDashboard"); // Điều hướng đến trang Dashboard nếu là admin
