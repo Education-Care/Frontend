@@ -144,9 +144,13 @@ const ProfilePage = () => {
       ...myInfo,
       birthday: incrementDateByOne(myInfo?.birthday),
     };
+    //  body: data nhập vào từ màn hình
     try {
       const id = JSON.parse(localStorage.getItem("user_login")).userId; // Mock ID, sau sẽ lấy từ thông tin đăng nhập
+      // localStorage.getItem("user_login") : lưu vào localStorage [application dev tool]
+      // Call API đến BE với params (id: userID, body:)
       const response = await updateInfoUserAsync(id, body);
+
       setMyInfo(response.data);
       setIsEdit(false);
       toast.success("Update user information successfully");
@@ -284,6 +288,7 @@ const ProfilePage = () => {
               {isEdit ? (
                 <div className="flex gap-4">
                   <Button variant="contained" onClick={handleSaveUpdate}>
+                    {/* nhấn button save call handleSaveUpdate */}
                     Save
                   </Button>
                   <Button
@@ -297,7 +302,9 @@ const ProfilePage = () => {
                   </Button>
                 </div>
               ) : (
-                <Button variant="outlined" onClick={() => setIsEdit(true)}>
+                // init màn hình 
+                <Button variant="outlined" onClick={() => setIsEdit(true)}>  
+                {/* set lại value isEdit = true để thực hiện nhập data update profile */}
                   Edit
                 </Button>
               )}
